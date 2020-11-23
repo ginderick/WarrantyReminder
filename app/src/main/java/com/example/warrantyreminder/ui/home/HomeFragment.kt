@@ -23,4 +23,13 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         return root
     }
+
+
+
+    //TODO 1. Finish home recycler view, should display placeholders
+    //TODO 2. Clickable recyclerView items
+    //TODO 3. Create viewmodel for Warranty Fragment
+
+
+
 }

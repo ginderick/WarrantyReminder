@@ -84,9 +84,9 @@ class HomeFragment : Fragment() {
 
 
 
-    //TODO 1. Finish home recycler view, should display placeholders - OK
-    //TODO 2. Clickable recyclerView items = OK
-    //TODO 3. Create viewmodel for Warranty Fragment - OK
+    //TODO 1. Create reporitory and apply repository pattern
+    //TODO 2. add Firebase usage
+    //TODO 3. implement viewmodel
 
 
 

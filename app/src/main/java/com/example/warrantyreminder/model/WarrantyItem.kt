@@ -1,9 +1,12 @@
 package com.example.warrantyreminder.model
 
-data class warrantyItem(
+import java.io.Serializable
+
+data class WarrantyItem(
     val id: Int,
     val itemName: String,
     val itemDescription: String,
     val expirationDate: String,
-    val isExpired: Boolean
-)
+    val isExpired: Boolean = false
+
+) : Serializable

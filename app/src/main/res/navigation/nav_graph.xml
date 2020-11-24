@@ -29,5 +29,9 @@
     <fragment
         android:id="@+id/warrantyFragment"
         android:name="com.example.warrantyreminder.ui.WarrantyFragment"
-        android:label="WarrantyFragment" />
+        android:label="WarrantyFragment" >
+        <argument
+            android:name="warrantyItem"
+            app:argType="com.example.warrantyreminder.model.WarrantyItem" />
+    </fragment>
 </navigation>

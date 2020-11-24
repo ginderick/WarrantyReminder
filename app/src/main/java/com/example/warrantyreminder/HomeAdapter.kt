@@ -3,29 +3,68 @@ package com.example.warrantyreminder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.warrantyreminder.model.warrantyItem
+import com.example.warrantyreminder.model.WarrantyItem
+import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 
-class HomeAdapter : RecyclerView.Adapter<WarrantyItemViewHolder>() {
-    var data = listOf<warrantyItem>()
+class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
 
-    override fun getItemCount(): Int = data.size
+    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    }
+
+
+    private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
+        override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    val differ = AsyncListDiffer(this, differCallback)
+    var data = listOf<WarrantyItem>()
+
+    override fun getItemCount(): Int = differ.currentList.size
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WarrantyItemViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.fragment_warranty_item, parent, false)
-        return WarrantyItemViewHolder(view)
+        return WarrantyItemViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.fragment_warranty_item,
+                parent,
+                false
+            )
+        )
 
     }
 
     override fun onBindViewHolder(holder: WarrantyItemViewHolder, position: Int) {
 
-        val item = data[position]
-        val res = holder.itemView.context.resources
+        val warrantyItem = differ.currentList[position]
+        holder.itemView.apply {
+            tvItemName.text = warrantyItem.itemName
+            tvExpiryDate.text = warrantyItem.expirationDate
+
+            setOnClickListener {
+                onItemClickListener?.let { it(warrantyItem) }
+            }
+
+
+        }
     }
+
+    private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (WarrantyItem) -> Unit) {
+        onItemClickListener = listener
+    }
+
+
 }
 
-class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-}

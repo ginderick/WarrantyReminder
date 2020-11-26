@@ -37,6 +37,16 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         homeAdapter.differ.submitList(warrantyList)
 
+        test_button.setOnClickListener {
+            homeViewModel.deleteItem(WarrantyItem(
+                itemName = "PS4",
+                itemDescription = "Mobile Phone",
+                expirationDate = "12/12/2121",
+            ))
+        }
+
+
+
         homeAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("Item", it)
@@ -63,19 +73,16 @@ class HomeFragment : Fragment() {
 
     private val warrantyList: List<WarrantyItem> = listOf(
         WarrantyItem(
-            id = 1,
             itemName = "Phone",
             itemDescription = "Mobile Phone",
             expirationDate = "12/12/2020",
         ),
         WarrantyItem(
-            id = 2,
             itemName = "PS5",
             itemDescription = "Play",
             expirationDate = "12/13/2020",
         ),
         WarrantyItem(
-            id = 3,
             itemName = "PS5123",
             itemDescription = "Pla123y",
             expirationDate = "12/13/2020",
@@ -84,9 +91,9 @@ class HomeFragment : Fragment() {
 
 
 
-    //TODO 1. Create reporitory and apply repository pattern
-    //TODO 2. add Firebase usage
-    //TODO 3. implement viewmodel
+    //TODO 1. Create reporitory and apply repository pattern - ok
+    //TODO 2. add Firebase usage - ok
+    //TODO 3. implement viewmodel - ok
 
 
 

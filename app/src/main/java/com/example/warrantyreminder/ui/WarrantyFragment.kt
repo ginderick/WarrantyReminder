@@ -19,7 +19,7 @@ class WarrantyFragment : Fragment() {
 
     private var _binding: FragmentWarrantyItemBinding? = null
     // This property is only valid between onCreateView and
-// onDestroyView.
+    // onDestroyView.
     private val binding get() = _binding!!
 
 
@@ -34,6 +34,13 @@ class WarrantyFragment : Fragment() {
         _binding = FragmentWarrantyItemBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

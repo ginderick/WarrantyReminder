@@ -3,7 +3,6 @@ package com.example.warrantyreminder.model
 import java.io.Serializable
 
 data class WarrantyItem(
-    val id: Int,
     val itemName: String,
     val itemDescription: String,
     val expirationDate: String,

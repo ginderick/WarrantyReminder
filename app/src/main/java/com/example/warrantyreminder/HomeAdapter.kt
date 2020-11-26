@@ -18,7 +18,7 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
 
     private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
         override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {

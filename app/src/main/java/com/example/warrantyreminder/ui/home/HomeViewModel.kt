@@ -28,7 +28,7 @@ class HomeViewModel : ViewModel() {
             }
     }
 
-    fun deleteItem(item: WarrantyItem) {
+     fun deleteItem(item: WarrantyItem) {
         firestoreRepository.deleteItem(item).addOnSuccessListener {
             Log.d("Firebase", "document deleted")
         }
@@ -36,6 +36,9 @@ class HomeViewModel : ViewModel() {
                 Log.d("Firebase", "Delete failed")
             }
     }
+
+    fun getAllItems() = firestoreRepository.getAllItems()
+
 
 
 }

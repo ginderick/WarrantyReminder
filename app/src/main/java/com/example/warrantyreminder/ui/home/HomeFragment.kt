@@ -13,12 +13,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.warrantyreminder.HomeAdapter
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_home.*
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
+    private val warrantyItemRef = FirebaseFirestore.getInstance()
+    private val query  = warrantyItemRef.collection("warranty")
+    private val options = FirestoreRecyclerOptions.Builder<WarrantyItem>().setQuery(query, WarrantyItem::class.java).build()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -35,14 +44,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        homeAdapter.differ.submitList(warrantyList)
+        getAllCollection()
 
         test_button.setOnClickListener {
-            homeViewModel.deleteItem(WarrantyItem(
-                itemName = "PS4",
-                itemDescription = "Mobile Phone",
-                expirationDate = "12/12/2121",
-            ))
         }
 
 
@@ -61,6 +65,13 @@ class HomeFragment : Fragment() {
 
     }
 
+    private fun getAllCollection() {
+        homeViewModel.getAllItems().observe(viewLifecycleOwner, Observer {
+            homeAdapter.differ.submitList(it.toList())
+        })
+    }
+
+
     private fun setupRecyclerView() {
         homeAdapter = HomeAdapter()
 
@@ -70,30 +81,9 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-    private val warrantyList: List<WarrantyItem> = listOf(
-        WarrantyItem(
-            itemName = "Phone",
-            itemDescription = "Mobile Phone",
-            expirationDate = "12/12/2020",
-        ),
-        WarrantyItem(
-            itemName = "PS5",
-            itemDescription = "Play",
-            expirationDate = "12/13/2020",
-        ),
-        WarrantyItem(
-            itemName = "PS5123",
-            itemDescription = "Pla123y",
-            expirationDate = "12/13/2020",
-        )
-    )
-
-
-
-    //TODO 1. Create reporitory and apply repository pattern - ok
-    //TODO 2. add Firebase usage - ok
-    //TODO 3. implement viewmodel - ok
+    //TODO 1. delete item in firestore
+    //TODO 2. update item in firestore
+    //TODO 3. Add UI in WarrantyFragment
 
 
 

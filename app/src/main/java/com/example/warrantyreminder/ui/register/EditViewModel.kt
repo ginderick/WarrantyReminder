@@ -1,21 +1,11 @@
-package com.example.warrantyreminder.ui.home
+package com.example.warrantyreminder.ui.register
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.warrantyreminder.firebase.FirestoreRepository
 import com.example.warrantyreminder.model.WarrantyItem
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-
-class HomeViewModel : ViewModel() {
+class EditViewModel : ViewModel() {
 
     var firestoreRepository = FirestoreRepository()
 
@@ -28,7 +18,7 @@ class HomeViewModel : ViewModel() {
             }
     }
 
-     fun deleteItem(item: String) {
+    fun deleteItem(item: String) {
         firestoreRepository.deleteItem(item).addOnSuccessListener {
             Log.d("Firebase", "document deleted")
         }

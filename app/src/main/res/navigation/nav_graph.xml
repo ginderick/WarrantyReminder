@@ -32,6 +32,17 @@
         android:label="WarrantyFragment" >
         <argument
             android:name="warrantyItem"
+            app:argType="com.example.warrantyreminder.model.WarrantyItem"/>
+        <action
+            android:id="@+id/action_warrantyFragment_to_editFragment"
+            app:destination="@id/editFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.example.warrantyreminder.ui.EditFragment"
+        android:label="EditFragment" >
+        <argument
+            android:name="warrantyItem"
             app:argType="com.example.warrantyreminder.model.WarrantyItem" />
     </fragment>
 </navigation>

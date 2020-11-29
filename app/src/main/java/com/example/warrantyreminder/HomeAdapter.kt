@@ -13,27 +13,30 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 
 
-class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
+class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRecyclerAdapter<WarrantyItem, HomeAdapter.WarrantyItemViewHolder>(
+    options
+) {
 
     inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     }
 
 
-    private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
-        override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
-            return oldItem == newItem
-        }
+//    private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
+//        override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+//            return oldItem == newItem
+//        }
+//
+//        override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+//            return oldItem == newItem
+//        }
+//    }
+//
+//    val differ = AsyncListDiffer(this, differCallback)
 
-        override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
-            return oldItem == newItem
-        }
-    }
 
-    val differ = AsyncListDiffer(this, differCallback)
+//    override fun getItemCount(): Int = differ.currentList.size
 
-
-    override fun getItemCount(): Int = differ.currentList.size
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WarrantyItemViewHolder {
@@ -46,23 +49,38 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>()
         )
     }
 
-    override fun onBindViewHolder(holder: WarrantyItemViewHolder, position: Int) {
-
-        val warrantyItem = differ.currentList[position]
-        holder.itemView.apply {
-            tvItemName.text = warrantyItem.itemName
-            tvExpiryDate.text = warrantyItem.expirationDate
-
-            setOnClickListener {
-                onItemClickListener?.let { it(warrantyItem) }
-            }
-        }
-    }
+//    override fun onBindViewHolder(holder: WarrantyItemViewHolder, position: Int) {
+//
+//        val warrantyItem = differ.currentList[position]
+//        holder.itemView.apply {
+//            tvItemName.text = warrantyItem.itemName
+//            tvExpiryDate.text = warrantyItem.expirationDate
+//
+//            setOnClickListener {
+//                onItemClickListener?.let { it(warrantyItem) }
+//            }
+//        }
+//    }
 
     private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (WarrantyItem) -> Unit) {
         onItemClickListener = listener
+    }
+
+    override fun onBindViewHolder(
+        holder: WarrantyItemViewHolder,
+        position: Int,
+        model: WarrantyItem
+    ) {
+        holder.itemView.apply {
+            tvItemName.text = model.itemName
+            tvExpiryDate.text = model.expirationDate
+
+            setOnClickListener {
+                onItemClickListener?.let { it(model) }
+            }
+        }
     }
 
 

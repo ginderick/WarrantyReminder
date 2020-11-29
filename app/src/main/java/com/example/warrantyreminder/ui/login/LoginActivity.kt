@@ -2,12 +2,10 @@ package com.example.warrantyreminder.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.warrantyreminder.MainActivity
-import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.ActivityLoginBinding
 import com.example.warrantyreminder.ui.register.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -36,12 +34,6 @@ class LoginActivity: AppCompatActivity() {
         binding.loginButton.setOnClickListener {
             doLogin()
         }
-
-
-
-
-
-
     }
 
     private fun doLogin() {

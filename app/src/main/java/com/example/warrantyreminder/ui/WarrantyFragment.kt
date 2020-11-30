@@ -1,8 +1,8 @@
 package com.example.warrantyreminder.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -11,7 +11,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentWarrantyBinding
-import com.example.warrantyreminder.databinding.FragmentWarrantyItemBinding
 import com.example.warrantyreminder.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_warranty.*
 
@@ -20,6 +19,8 @@ class WarrantyFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentWarrantyBinding? = null
+    private var warrantyItemId = ""
+
 
 
     // This property is only valid between onCreateView and
@@ -44,10 +45,13 @@ class WarrantyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val item = args.warrantyItem
+        warrantyItemId = args.warrantyItemId
 
         tvItemName.text = item.itemName
         tvItemDescription.text = item.itemDescription
         tvExpiryDate.text = item.expirationDate
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -65,9 +69,11 @@ class WarrantyFragment : Fragment() {
 
 
     private fun editWarrantyItem() {
+
         //send data to EditFragment
         val bundle = Bundle().apply {
             putSerializable("warrantyItem",args.warrantyItem)
+            putString("warrantyItemId", warrantyItemId)
         }
         findNavController().navigate(
             R.id.action_warrantyFragment_to_editFragment,

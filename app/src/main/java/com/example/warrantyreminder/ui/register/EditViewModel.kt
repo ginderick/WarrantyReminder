@@ -7,7 +7,7 @@ import com.example.warrantyreminder.model.WarrantyItem
 
 class EditViewModel : ViewModel() {
 
-    var firestoreRepository = FirestoreRepository()
+    private var firestoreRepository = FirestoreRepository()
 
     fun saveItem(item: WarrantyItem) {
         firestoreRepository.saveItem(item).addOnSuccessListener {

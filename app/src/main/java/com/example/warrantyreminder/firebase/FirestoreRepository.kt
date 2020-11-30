@@ -3,6 +3,7 @@ package com.example.warrantyreminder.firebase
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.warrantyreminder.model.WarrantyItem
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,7 +17,7 @@ class FirestoreRepository {
 
     val firestore = FirebaseFirestore.getInstance()
     private val db: FirebaseFirestore = Firebase.firestore
-    val items: MutableLiveData<ArrayList<WarrantyItem>> = MutableLiveData()
+    private val warrantyItemRef = FirebaseFirestore.getInstance()
 
     init {
 

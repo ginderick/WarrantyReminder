@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.warrantyreminder.firebase.FirestoreRepository
 import com.example.warrantyreminder.model.WarrantyItem
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
@@ -36,4 +37,6 @@ class HomeViewModel : ViewModel() {
                 Log.d("Firebase", "Delete failed")
             }
     }
+
+
 }

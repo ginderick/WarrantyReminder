@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
     private val warrantyItemRef = FirebaseFirestore.getInstance()
-
+    private var warrantyItemId = ""
 
     override fun onStart() {
         super.onStart()
@@ -80,6 +80,7 @@ class HomeFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val document = homeAdapter.snapshots.getSnapshot(position).toObject<WarrantyItem>()
                 val documentId = homeAdapter.snapshots.getSnapshot(position).id
+                warrantyItemId = documentId
                 Log.d("document", documentId)
                 homeViewModel.deleteItem(documentId)
 
@@ -98,21 +99,32 @@ class HomeFragment : Fragment() {
 
 
 
+
+
         homeAdapter.setOnItemClickListener {
+            val itemPosition = homeAdapter.getWarrantyItemPosition()
+            val documentId = homeAdapter.snapshots.getSnapshot(itemPosition).id
+            warrantyItemId = documentId
             val bundle = Bundle().apply {
                 putSerializable("warrantyItem", it)
+                putString("warrantyItemId", warrantyItemId)
             }
+
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,
                 bundle
             )
+
+
         }
     }
+
 
     override fun onStop() {
         super.onStop()
         homeAdapter.stopListening()
     }
+
 
     private fun setupRecyclerView() {
         val query = warrantyItemRef.collection("warranty")
@@ -127,6 +139,7 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity)
         }
     }
+
 
 
     //TODO 1. delete item in firestore - oK

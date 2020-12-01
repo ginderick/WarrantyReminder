@@ -30,6 +30,7 @@ class HomeFragment : Fragment() {
     lateinit var homeAdapter: HomeAdapter
     private val warrantyItemRef = FirebaseFirestore.getInstance()
     private var warrantyItemId = ""
+    var TAG: String = "lifecycle"
 
     override fun onStart() {
         super.onStart()
@@ -52,6 +53,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+
         test_button.setOnClickListener {
 
             lifecycleScope.launch {
@@ -63,6 +65,7 @@ class HomeFragment : Fragment() {
                 )
             }
         }
+
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -95,6 +98,7 @@ class HomeFragment : Fragment() {
 
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(rvHome)
+
         }
 
 
@@ -104,19 +108,25 @@ class HomeFragment : Fragment() {
         homeAdapter.setOnItemClickListener {
             val itemPosition = homeAdapter.getWarrantyItemPosition()
             val documentId = homeAdapter.snapshots.getSnapshot(itemPosition).id
+
+
+
+
+            Log.d(TAG, "setOnItemClickListener called in HomeFragment")
+            Log.d(TAG, "Document Id is $documentId HomeFragment")
             warrantyItemId = documentId
             val bundle = Bundle().apply {
                 putSerializable("warrantyItem", it)
-                putString("warrantyItemId", warrantyItemId)
+                putString("warrantyItemId", documentId)
             }
-
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,
                 bundle
             )
-
-
         }
+
+
+
     }
 
 
@@ -134,6 +144,7 @@ class HomeFragment : Fragment() {
 
         homeAdapter = HomeAdapter(options)
 
+
         rvHome.apply {
             adapter = homeAdapter
             layoutManager = LinearLayoutManager(activity)
@@ -142,9 +153,9 @@ class HomeFragment : Fragment() {
 
 
 
-    //TODO 1. delete item in firestore - oK
-    //TODO 2. update item in firestore
-    //TODO 3. Add UI in WarrantyFragment
+    //TODO 1. fix viewmodel to run on coroutines
+    //TODO 2. refractor, add DI
+    //TODO 3.
 
 
 }

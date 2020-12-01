@@ -55,9 +55,9 @@ class EditFragment: Fragment() {
         val item = args.warrantyItem
 
 
-        etItemName.setText(item.itemName)
-        etItemDescription.setText(item.itemDescription)
-        etExpiryDate.setText(item.expirationDate)
+        etItemName.setText(item?.itemName)
+        etItemDescription.setText(item?.itemDescription)
+        etExpiryDate.setText(item?.expirationDate)
 
     }
 
@@ -71,16 +71,18 @@ class EditFragment: Fragment() {
             R.id.save_item-> {
                 updateWarrantyItem(args.warrantyItemId)
                 Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
-
+                NavigationUI.onNavDestinationSelected(
+                    item, requireView().findNavController()
+                ) || super.onOptionsItemSelected(item)
+//
 //                val bundle = Bundle().apply {
-//                    putSerializable("warrantyItem", getWarrantyItem())
+//                    putSerializable("warrantyItem", getWarrantyItemDetails())
+//                    putString("warrantyItemId", "id")
 //                }
 //                findNavController().navigate(
 //                    R.id.action_editFragment_to_warrantyFragment,
 //                    bundle
 //                )
-
-                NavHostFragment.findNavController(this@EditFragment).navigateUp()
             }
             else -> NavigationUI.onNavDestinationSelected(
                 item, requireView().findNavController()
@@ -88,7 +90,7 @@ class EditFragment: Fragment() {
         }
     }
 
-    private fun getWarrantyItem(): WarrantyItem {
+    private fun getWarrantyItemDetails(): WarrantyItem {
         return WarrantyItem(
             itemName = etItemName.text.toString(),
             itemDescription =  etItemDescription.text.toString(),
@@ -101,7 +103,7 @@ class EditFragment: Fragment() {
 
         Log.d("warrantyItemId", warrantyItemId)
         warrantyCollectionRef.document(warrantyItemId).set(
-            getWarrantyItem()
+            getWarrantyItemDetails()
         )
 
 

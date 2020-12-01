@@ -39,6 +39,9 @@
         <argument
             android:name="warrantyItemId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_warrantyFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
     </fragment>
     <fragment
         android:id="@+id/editFragment"
@@ -47,9 +50,6 @@
         <argument
             android:name="warrantyItem"
             app:argType="com.example.warrantyreminder.model.WarrantyItem" />
-        <action
-            android:id="@+id/action_editFragment_to_warrantyFragment"
-            app:destination="@id/warrantyFragment" />
         <argument
             android:name="warrantyItemId"
             app:argType="string" />

@@ -6,12 +6,14 @@ import com.example.warrantyreminder.model.WarrantyItem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 
 import com.google.firebase.ktx.Firebase
+import java.util.concurrent.Flow
 
 class FirestoreRepository {
 
@@ -34,5 +36,19 @@ class FirestoreRepository {
             .document(warrantyItem)
             .delete()
     }
+
+    fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
+        return firestore.collection("warranty")
+            .document(warrantyItemId)
+            .get()
+    }
+
+    fun retrieveAllWarrantyItem(): Task<DocumentSnapshot> {
+        return firestore.collection("warranty")
+            .document()
+            .get()
+    }
+
+
 
 }

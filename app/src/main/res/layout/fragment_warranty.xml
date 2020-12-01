@@ -17,7 +17,6 @@
         android:id="@+id/tvItemName"
         android:layout_height="20dp"
         android:layout_width="wrap_content"
-        android:text="Helloasdfsdfasf"
         android:textSize="15sp"
         android:layout_margin="20dp"
         android:layout_toRightOf="@+id/tvItemNameText"/>
@@ -35,7 +34,6 @@
         android:id="@+id/tvItemDescription"
         android:layout_height="20dp"
         android:layout_width="wrap_content"
-        android:text="Hello"
         android:layout_margin="20dp"
         android:layout_toRightOf="@+id/tvItemDescriptionText"
         android:layout_below="@+id/tvItemName"
@@ -55,7 +53,6 @@
         android:id="@+id/tvExpiryDate"
         android:layout_height="20dp"
         android:layout_width="wrap_content"
-        android:text="Hello"
         android:layout_margin="20dp"
         android:layout_below="@+id/tvItemDescription"
         android:layout_toRightOf="@id/tvExpiryDateText"

@@ -21,14 +21,15 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
     options
 ) {
 
-    private var warrantyItemPosition: Int? = null
 
-    //get Item position clicked
-    fun getWarrantyItemPosition(): Int {
-        return warrantyItemPosition!!
+
+
+    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     }
 
-    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
+    var warrantyItemPosition: Int? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WarrantyItemViewHolder {
@@ -41,9 +42,12 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
         )
     }
 
+    //get Item position clicked
+    fun getWarrantyItemPosition(): Int {
+        return warrantyItemPosition!!
+    }
 
 
-    private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
 
 
     fun setOnItemClickListener(listener: (WarrantyItem) -> Unit) {
@@ -65,25 +69,10 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
             setOnClickListener {
                 onItemClickListener?.let { it(model) }
             }
+
         }
+
     }
-
-    //    private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
-//        override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
-//            return oldItem == newItem
-//        }
-//
-//        override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
-//            return oldItem == newItem
-//        }
-//    }
-//
-//    val differ = AsyncListDiffer(this, differCallback)
-
-
-//    override fun getItemCount(): Int = differ.currentList.size
-
-
 
 
 }

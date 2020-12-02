@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.launch
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
 
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
@@ -61,12 +61,14 @@ class HomeFragment : Fragment() {
                     WarrantyItem(
                         itemName = "android",
                         itemDescription = "mobile phone",
+                        id = ""
                     )
                 )
             }
         }
 
 
+        //swipe to delete
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -83,8 +85,8 @@ class HomeFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val document = homeAdapter.snapshots.getSnapshot(position).toObject<WarrantyItem>()
                 val documentId = homeAdapter.snapshots.getSnapshot(position).id
+
                 warrantyItemId = documentId
-                Log.d("document", documentId)
                 homeViewModel.deleteItem(documentId)
 
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
@@ -95,7 +97,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(rvHome)
 
@@ -106,18 +107,10 @@ class HomeFragment : Fragment() {
 
 
         homeAdapter.setOnItemClickListener {
-            val itemPosition = homeAdapter.getWarrantyItemPosition()
-            val documentId = homeAdapter.snapshots.getSnapshot(itemPosition).id
 
-
-
-
-            Log.d(TAG, "setOnItemClickListener called in HomeFragment")
-            Log.d(TAG, "Document Id is $documentId HomeFragment")
-            warrantyItemId = documentId
+            //send data to WarrantyFragment
             val bundle = Bundle().apply {
                 putSerializable("warrantyItem", it)
-                putString("warrantyItemId", documentId)
             }
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,
@@ -129,12 +122,10 @@ class HomeFragment : Fragment() {
 
     }
 
-
     override fun onStop() {
         super.onStop()
         homeAdapter.stopListening()
     }
-
 
     private fun setupRecyclerView() {
         val query = warrantyItemRef.collection("warranty")
@@ -151,11 +142,12 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun recyclerViewClick(v: View, position: Int) {
+
+    }
 
 
     //TODO 1. fix viewmodel to run on coroutines
     //TODO 2. refractor, add DI
     //TODO 3.
-
-
 }

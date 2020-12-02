@@ -22,14 +22,18 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
 ) {
 
 
+    private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
+    var warrantyItemPosition: Int? = null
 
 
-    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        override fun onClick(p0: View?) {
+
+        }
 
     }
 
-    private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
-    var warrantyItemPosition: Int? = null
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WarrantyItemViewHolder {
@@ -45,6 +49,10 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
     //get Item position clicked
     fun getWarrantyItemPosition(): Int {
         return warrantyItemPosition!!
+    }
+
+    interface RecyclerViewClickListener {
+        fun recyclerViewClick(v: View , position: Int)
     }
 
 

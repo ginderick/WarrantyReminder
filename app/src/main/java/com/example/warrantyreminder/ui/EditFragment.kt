@@ -69,7 +69,7 @@ class EditFragment: Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.save_item-> {
-                updateWarrantyItem(args.warrantyItemId)
+                updateWarrantyItem(args.warrantyItem.id)
                 Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
                 NavigationUI.onNavDestinationSelected(
                     item, requireView().findNavController()
@@ -95,7 +95,7 @@ class EditFragment: Fragment() {
             itemName = etItemName.text.toString(),
             itemDescription =  etItemDescription.text.toString(),
             expirationDate = etExpiryDate.text.toString(),
-            isExpired = false
+            isExpired = false,
         )
     }
 

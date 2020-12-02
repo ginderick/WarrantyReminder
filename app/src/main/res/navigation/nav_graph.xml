@@ -12,7 +12,12 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_navigation_home_to_warrantyFragment"
-            app:destination="@id/warrantyFragment" />
+            app:destination="@id/warrantyFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
 
     <fragment
@@ -35,13 +40,18 @@
             app:argType="com.example.warrantyreminder.model.WarrantyItem"/>
         <action
             android:id="@+id/action_warrantyFragment_to_editFragment"
-            app:destination="@id/editFragment" />
-        <argument
-            android:name="warrantyItemId"
-            app:argType="string" />
+            app:destination="@id/editFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_warrantyFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/editFragment"
@@ -50,8 +60,12 @@
         <argument
             android:name="warrantyItem"
             app:argType="com.example.warrantyreminder.model.WarrantyItem" />
-        <argument
-            android:name="warrantyItemId"
-            app:argType="string" />
+        <action
+            android:id="@+id/action_editFragment_to_warrantyFragment"
+            app:destination="@id/warrantyFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 </navigation>

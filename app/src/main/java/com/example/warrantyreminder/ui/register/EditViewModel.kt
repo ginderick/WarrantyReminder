@@ -10,12 +10,7 @@ class EditViewModel : ViewModel() {
     private var firestoreRepository = FirestoreRepository()
 
     fun saveItem(item: WarrantyItem) {
-        firestoreRepository.saveItem(item).addOnSuccessListener {
-            Log.d("Firebase", "document save")
-        }
-            .addOnFailureListener {
-                Log.d("Firebase", "Save failed")
-            }
+        firestoreRepository.saveItem(item)
     }
 
     fun deleteItem(item: String) {

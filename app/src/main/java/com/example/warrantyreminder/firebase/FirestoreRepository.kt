@@ -13,23 +13,27 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.Flow
 
 class FirestoreRepository {
 
     val firestore = FirebaseFirestore.getInstance()
     private val db: FirebaseFirestore = Firebase.firestore
-    private val warrantyItemRef = FirebaseFirestore.getInstance()
 
     init {
 
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
     }
 
-    fun saveItem(warrantyItem: WarrantyItem): Task<DocumentReference> {
-        return firestore.collection("warranty")
+
+    fun saveItem(warrantyItem: WarrantyItem) = CoroutineScope(Dispatchers.IO).launch {
+        firestore.collection("warranty")
             .add(warrantyItem)
     }
+
 
     fun deleteItem(warrantyItem: String): Task<Void> {
         return firestore.collection("warranty")
@@ -37,11 +41,18 @@ class FirestoreRepository {
             .delete()
     }
 
+//    fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
+//        return firestore.collection("warranty")
+//            .document(warrantyItemId)
+//            .get()
+//    }
+
     fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
         return firestore.collection("warranty")
             .document(warrantyItemId)
             .get()
     }
+
 
     fun retrieveAllWarrantyItem(): Task<DocumentSnapshot> {
         return firestore.collection("warranty")

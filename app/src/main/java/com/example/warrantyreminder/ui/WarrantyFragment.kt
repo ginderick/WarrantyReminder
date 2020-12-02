@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -22,15 +23,12 @@ class WarrantyFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentWarrantyBinding? = null
-    private var warrantyItemId = ""
     var TAG: String = "lifecycle"
-
+    private val args: WarrantyFragmentArgs by navArgs()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    val args: WarrantyFragmentArgs by navArgs()
-
 
 
     override fun onCreateView(
@@ -39,43 +37,38 @@ class WarrantyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
-        setHasOptionsMenu(true)
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         _binding = FragmentWarrantyBinding.inflate(inflater, container, false)
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-//        val item = args.warrantyItem
-        Log.d(TAG, "Current warrantyItem id is $warrantyItemId in WarrantyFragment")
-        warrantyItemId = args.warrantyItemId
-        Log.d(TAG, "Now the warrantyItem id is $warrantyItemId in WarrantyFragment")
+        val warrantyItemId = args.warrantyItem.id
 
         //get WarrantyItem in viewmodel
-        homeViewModel.updateWarrantyItem(warrantyItemId).addOnSuccessListener {it ->
-            val warrantyItem = it.toObject<WarrantyItem>()
+        lifecycleScope.launch {
+            homeViewModel.updateWarrantyItem(warrantyItemId).addOnSuccessListener { it ->
+                val warrantyItem = it.toObject<WarrantyItem>()
 
-            tvItemName.text = warrantyItem?.itemName
-            tvItemDescription.text = warrantyItem?.itemDescription
-            tvExpiryDate.text = warrantyItem?.expirationDate
+                tvItemName.text = warrantyItem?.itemName
+                tvItemDescription.text = warrantyItem?.itemDescription
+                tvExpiryDate.text = warrantyItem?.expirationDate
+            }
         }
-
-        Log.d(TAG, "Reset the warrantyItem id is $warrantyItemId in WarrantyFragment")
 
 
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // handle the up button here
         return when (item.itemId) {
             R.id.edit_settings -> {
                 editWarrantyItem()
                 true
             }
+
             else -> NavigationUI.onNavDestinationSelected(
                 item, requireView().findNavController()
             ) || super.onOptionsItemSelected(item)
@@ -95,7 +88,7 @@ class WarrantyFragment : Fragment() {
         //send data to EditFragment
         val bundle = Bundle().apply {
             putSerializable("warrantyItem", args.warrantyItem)
-            putString("warrantyItemId", warrantyItemId)
+            putString("warrantyItemId", args.warrantyItem.id)
         }
         findNavController().navigate(
             R.id.action_warrantyFragment_to_editFragment,
@@ -107,7 +100,6 @@ class WarrantyFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_main, menu)
     }
-
 
 
     override fun onDestroyView() {

@@ -23,12 +23,7 @@ class HomeViewModel : ViewModel() {
     var firestoreRepository = FirestoreRepository()
 
      fun saveItem(item: WarrantyItem) {
-        firestoreRepository.saveItem(item).addOnSuccessListener {
-            Log.d("Firebase", "document save")
-        }
-            .addOnFailureListener {
-                Log.d("Firebase", "Save failed")
-            }
+        firestoreRepository.saveItem(item)
     }
 
     fun deleteItem(item: String) {
@@ -40,7 +35,6 @@ class HomeViewModel : ViewModel() {
             }
     }
 
-    fun updateWarrantyItem(warrantyItemId: String): Task<DocumentSnapshot> {
-         return firestoreRepository.updateWarrantyItem(warrantyItemId)
-    }
+    fun updateWarrantyItem(warrantyItemId: String) = firestoreRepository.updateWarrantyItem(warrantyItemId)
+
 }

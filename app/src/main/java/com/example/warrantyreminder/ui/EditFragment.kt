@@ -71,18 +71,18 @@ class EditFragment: Fragment() {
             R.id.save_item-> {
                 updateWarrantyItem(args.warrantyItem.id)
                 Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
-                NavigationUI.onNavDestinationSelected(
-                    item, requireView().findNavController()
-                ) || super.onOptionsItemSelected(item)
+//                NavigationUI.onNavDestinationSelected(
+//                    item, requireView().findNavController()
+//                ) || super.onOptionsItemSelected(item)
 //
-//                val bundle = Bundle().apply {
-//                    putSerializable("warrantyItem", getWarrantyItemDetails())
-//                    putString("warrantyItemId", "id")
-//                }
-//                findNavController().navigate(
-//                    R.id.action_editFragment_to_warrantyFragment,
-//                    bundle
-//                )
+                val bundle = Bundle().apply {
+                    putSerializable("warrantyItem", getWarrantyItemDetails())
+                }
+                findNavController().navigate(
+                    R.id.action_editFragment_to_warrantyFragment,
+                    bundle
+                )
+                true
             }
             else -> NavigationUI.onNavDestinationSelected(
                 item, requireView().findNavController()
@@ -94,16 +94,20 @@ class EditFragment: Fragment() {
         return WarrantyItem(
             itemName = etItemName.text.toString(),
             itemDescription =  etItemDescription.text.toString(),
-            expirationDate = etExpiryDate.text.toString(),
-            isExpired = false,
+            expirationDate = etExpiryDate.text.toString()
         )
     }
 
     private fun updateWarrantyItem(warrantyItemId: String) {
 
         Log.d("warrantyItemId", warrantyItemId)
-        warrantyCollectionRef.document(warrantyItemId).set(
-            getWarrantyItemDetails()
+        warrantyCollectionRef.document(warrantyItemId).update(
+            mapOf(
+                "itemName" to etItemName.text.toString(),
+                "itemDescription" to etItemDescription.text.toString(),
+                "expirationDate" to etExpiryDate.text.toString(),
+                "isExpired" to false
+            )
         )
 
 

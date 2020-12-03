@@ -41,11 +41,6 @@ class FirestoreRepository {
             .delete()
     }
 
-//    fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
-//        return firestore.collection("warranty")
-//            .document(warrantyItemId)
-//            .get()
-//    }
 
     fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
         return firestore.collection("warranty")

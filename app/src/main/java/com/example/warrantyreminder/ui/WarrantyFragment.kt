@@ -49,15 +49,21 @@ class WarrantyFragment : Fragment() {
         val warrantyItemId = args.warrantyItem.id
 
         //get WarrantyItem in viewmodel
-        lifecycleScope.launch {
-            homeViewModel.updateWarrantyItem(warrantyItemId).addOnSuccessListener { it ->
-                val warrantyItem = it.toObject<WarrantyItem>()
+//        lifecycleScope.launch {
+//            homeViewModel.updateWarrantyItem(warrantyItemId).addOnSuccessListener { it ->
+//                val warrantyItem = it.toObject<WarrantyItem>()
+//
+//                tvItemName.text = warrantyItem?.itemName
+//                tvItemDescription.text = warrantyItem?.itemDescription
+//                tvExpiryDate.text = warrantyItem?.expirationDate
+//            }
+//        }
 
-                tvItemName.text = warrantyItem?.itemName
-                tvItemDescription.text = warrantyItem?.itemDescription
-                tvExpiryDate.text = warrantyItem?.expirationDate
-            }
-        }
+        val warrantyItem = args.warrantyItem
+
+        tvItemName.text = warrantyItem.itemName
+        tvItemDescription.text = warrantyItem.itemDescription
+        tvExpiryDate.text = warrantyItem.expirationDate
 
 
     }
@@ -72,13 +78,6 @@ class WarrantyFragment : Fragment() {
             else -> NavigationUI.onNavDestinationSelected(
                 item, requireView().findNavController()
             ) || super.onOptionsItemSelected(item)
-
-//            else -> {
-//                findNavController().navigate(
-//                    R.id.action_warrantyFragment_to_navigation_home
-//                )
-//                true
-//            }
         }
     }
 

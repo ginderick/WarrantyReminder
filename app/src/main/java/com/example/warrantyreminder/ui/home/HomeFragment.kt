@@ -103,9 +103,6 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
         }
 
 
-
-
-
         homeAdapter.setOnItemClickListener {
 
             //send data to WarrantyFragment

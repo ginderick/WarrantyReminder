@@ -144,7 +144,9 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
     }
 
 
-    //TODO 1. fix viewmodel to run on coroutines
-    //TODO 2. refractor, add DI
-    //TODO 3.
+    //TODO 1. Add AlertDialog when exiting and saving in EditFragment
+    //TODO 2. Add AddWarrantyItemFragment for adding items
+    //TODO 3. Polish recyclerView UI
+    //TODO 4. Recycler View arrange by created date via firestore
+    //TODO 5. Add image in model class
 }

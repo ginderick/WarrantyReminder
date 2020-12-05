@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvItemNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_margin="20dp"
+        android:text="Item Name: "
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etItemName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/tvItemNameText"
+        android:layout_margin="20dp"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvItemDescriptionText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_below="@+id/etItemName"
+        android:layout_margin="20dp"
+        android:text="Description: "
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etItemDescription"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tvItemDescriptionText"
+        android:layout_margin="20dp"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvExpiryDateText"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_below="@+id/etItemDescription"
+        android:layout_margin="20dp"
+        android:text="Expiration Date:"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etExpiryDate"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/tvExpiryDateText"
+        android:layout_margin="20dp"
+        android:padding="0dp"
+        android:textSize="15sp" />
+
+
+</RelativeLayout>

@@ -50,7 +50,6 @@ class EditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val item = args.warrantyItem
 
-
         etItemName.setText(item.itemName)
         etItemDescription.setText(item.itemDescription)
         etExpiryDate.setText(item.expirationDate)
@@ -91,7 +90,6 @@ class EditFragment : Fragment() {
             itemName = etItemName.text.toString(),
             itemDescription = etItemDescription.text.toString(),
             expirationDate = etExpiryDate.text.toString(),
-            isExpired = false
         )
     }
 
@@ -106,8 +104,7 @@ class EditFragment : Fragment() {
             mapOf(
                 "itemName" to etItemName.text.toString(),
                 "itemDescription" to etItemDescription.text.toString(),
-                "expirationDate" to etExpiryDate.text.toString(),
-                "isExpired" to false
+                "expirationDate" to etExpiryDate.text.toString()
             )
         )
     }
@@ -136,8 +133,6 @@ class EditFragment : Fragment() {
 
         return true
     }
-
-
 
 
 }

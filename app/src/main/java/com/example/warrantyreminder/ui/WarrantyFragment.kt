@@ -3,6 +3,7 @@ package com.example.warrantyreminder.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -47,7 +48,6 @@ class WarrantyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val warrantyItemId = args.warrantyItem.id
         val warrantyItem = args.warrantyItem
 
         tvItemName.text = warrantyItem.itemName
@@ -72,7 +72,6 @@ class WarrantyFragment : Fragment() {
     private fun editWarrantyItem() {
 
             //args is from HomeFragment
-            Log.d(TAG, "args is from HomeFragment")
             val bundle = Bundle().apply {
                 putSerializable("warrantyItem", args.warrantyItem)
             }
@@ -80,10 +79,6 @@ class WarrantyFragment : Fragment() {
                 R.id.action_warrantyFragment_to_editFragment,
                 bundle
             )
-
-
-        //send data to EditFragment
-
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.warrantyreminder.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.warrantyreminder.HomeAdapter
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.launch
@@ -54,17 +52,8 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
 
         setupRecyclerView()
 
-        test_button.setOnClickListener {
-
-            lifecycleScope.launch {
-                homeViewModel.saveItem(
-                    WarrantyItem(
-                        itemName = "android",
-                        itemDescription = "mobile phone",
-                        id = ""
-                    )
-                )
-            }
+        add_button.setOnClickListener {
+            findNavController().navigate(R.id.addFragment)
         }
 
 
@@ -143,8 +132,7 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
 
     }
 
-    //TODO 1. Add AlertDialog when exiting and saving in EditFragment - OK
-    //TODO 2. Add AddWarrantyItemFragment for adding items
+    //TODO 2. Add AddWarrantyItemFragment for adding items - OK
     //TODO 3. Polish recyclerView UI
     //TODO 4. Recycler View arrange by created date via firestore
     //TODO 5. Add image in model class

@@ -34,4 +34,7 @@ class HomeViewModel : ViewModel() {
                 Log.d("Firebase", "Delete failed")
             }
     }
+
+    fun getDocumentReference() =firestoreRepository.getDocumentReference()
+
 }

@@ -1,18 +1,14 @@
-package com.example.warrantyreminder
+package com.example.warrantyreminder.ui.home
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import kotlinx.android.synthetic.main.fragment_warranty.view.*
-import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 import kotlinx.android.synthetic.main.fragment_warranty_item.view.tvExpiryDate
 import kotlinx.android.synthetic.main.fragment_warranty_item.view.tvItemName
 

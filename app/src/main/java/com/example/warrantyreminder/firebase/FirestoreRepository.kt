@@ -46,4 +46,7 @@ class FirestoreRepository {
             .document(warrantyItemId)
             .get()
     }
+
+    fun getDocumentReference() = firestore.collection("warranty").document()
+
 }

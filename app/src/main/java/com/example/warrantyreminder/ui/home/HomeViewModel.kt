@@ -34,7 +34,4 @@ class HomeViewModel : ViewModel() {
                 Log.d("Firebase", "Delete failed")
             }
     }
-
-    fun updateWarrantyItem(warrantyItemId: String) = firestoreRepository.updateWarrantyItem(warrantyItemId)
-
 }

@@ -143,8 +143,7 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
 
     }
 
-
-    //TODO 1. Add AlertDialog when exiting and saving in EditFragment
+    //TODO 1. Add AlertDialog when exiting and saving in EditFragment - OK
     //TODO 2. Add AddWarrantyItemFragment for adding items
     //TODO 3. Polish recyclerView UI
     //TODO 4. Recycler View arrange by created date via firestore

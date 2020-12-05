@@ -21,7 +21,6 @@ import java.util.concurrent.Flow
 class FirestoreRepository {
 
     val firestore = FirebaseFirestore.getInstance()
-    private val db: FirebaseFirestore = Firebase.firestore
 
     init {
 
@@ -47,14 +46,4 @@ class FirestoreRepository {
             .document(warrantyItemId)
             .get()
     }
-
-
-    fun retrieveAllWarrantyItem(): Task<DocumentSnapshot> {
-        return firestore.collection("warranty")
-            .document()
-            .get()
-    }
-
-
-
 }

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,16 +18,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.coroutines.launch
 
 
-class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
+class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
     private val warrantyItemRef = FirebaseFirestore.getInstance()
     private var warrantyItemId = ""
-    var TAG: String = "lifecycle"
 
     override fun onStart() {
         super.onStart()
@@ -42,9 +39,7 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-
-        return root
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +47,7 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
 
         setupRecyclerView()
 
-        add_button.setOnClickListener {
+        fab_add.setOnClickListener {
             findNavController().navigate(R.id.addFragment)
         }
 
@@ -114,7 +109,7 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
     }
 
     private fun setupRecyclerView() {
-        val query = warrantyItemRef.collection("warranty")
+        val query = warrantyItemRef.collection("warranty").orderBy("timeStamp", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<WarrantyItem>()
             .setQuery(query, WarrantyItem::class.java)
             .build()
@@ -128,12 +123,10 @@ class HomeFragment : Fragment(), HomeAdapter.RecyclerViewClickListener {
         }
     }
 
-    override fun recyclerViewClick(v: View, position: Int) {
 
-    }
 
-    //TODO 2. Add AddWarrantyItemFragment for adding items - OK
-    //TODO 3. Polish recyclerView UI
-    //TODO 4. Recycler View arrange by created date via firestore
-    //TODO 5. Add image in model class
+    //TODO 1. Required fields before saving
+    //TODO 2. Add image in model class
+    //TODO 3. Fix Login Activity
+    //TODO 4. Expiration Date convert to Date Dialog
 }

@@ -1,24 +1,15 @@
-package com.example.warrantyreminder.ui
+package com.example.warrantyreminder.ui.warranty
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.NavigationUI
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentWarrantyBinding
-import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.ui.home.HomeViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.fragment_warranty.*
-import kotlinx.coroutines.launch
 
 class WarrantyFragment : Fragment() {
 

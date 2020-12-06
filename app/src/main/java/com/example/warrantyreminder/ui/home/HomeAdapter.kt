@@ -9,8 +9,7 @@ import com.example.warrantyreminder.model.WarrantyItem
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import kotlinx.android.synthetic.main.fragment_warranty_item.view.tvExpiryDate
-import kotlinx.android.synthetic.main.fragment_warranty_item.view.tvItemName
+import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 
 
 class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRecyclerAdapter<WarrantyItem, HomeAdapter.WarrantyItemViewHolder>(
@@ -42,18 +41,6 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
         )
     }
 
-    //get Item position clicked
-    fun getWarrantyItemPosition(): Int {
-        return warrantyItemPosition!!
-    }
-
-    interface RecyclerViewClickListener {
-        fun recyclerViewClick(v: View , position: Int)
-    }
-
-
-
-
     fun setOnItemClickListener(listener: (WarrantyItem) -> Unit) {
         onItemClickListener = listener
     }
@@ -69,6 +56,7 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
             warrantyItemPosition = position
             tvItemName.text = model.itemName
             tvExpiryDate.text = model.expirationDate
+            tvItemDescription.text = model.itemDescription
 
             setOnClickListener {
                 onItemClickListener?.let { it(model) }

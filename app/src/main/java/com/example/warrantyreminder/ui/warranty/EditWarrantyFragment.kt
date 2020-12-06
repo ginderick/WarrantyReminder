@@ -1,4 +1,4 @@
-package com.example.warrantyreminder.ui
+package com.example.warrantyreminder.ui.warranty
 
 import android.os.Bundle
 import android.util.Log
@@ -6,10 +6,8 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.ui.NavigationUI
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
@@ -19,7 +17,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 
-class EditFragment : Fragment() {
+class EditWarrantyFragment : Fragment() {
 
     var TAG: String = "lifecycle"
 
@@ -29,7 +27,7 @@ class EditFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    val args: EditFragmentArgs by navArgs()
+    val args: EditWarrantyFragmentArgs by navArgs()
     private val warrantyCollectionRef = Firebase.firestore.collection("warranty")
 
 
@@ -93,12 +91,6 @@ class EditFragment : Fragment() {
         )
     }
 
-    private fun isWarrantItemChanged(): Boolean {
-        return args.warrantyItem.itemName != etItemName.text.toString() &&
-                args.warrantyItem.itemDescription != etItemDescription.text.toString() &&
-                args.warrantyItem.expirationDate != etExpiryDate.text.toString()
-    }
-
     private fun updateWarrantyItem(warrantyItemId: String) {
         warrantyCollectionRef.document(warrantyItemId).update(
             mapOf(
@@ -111,27 +103,32 @@ class EditFragment : Fragment() {
 
     private fun showCancelWarrantyEditDialog(): Boolean {
 
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Cancel")
-            .setMessage("Are you sure you want to cancel edit? ")
-            .setNegativeButton("No") { dialog, which ->
-                dialog.cancel()
-            }
-            .setPositiveButton("Yes") { dialog, which ->
 
-                val bundle = Bundle().apply {
-                    putSerializable("warrantyItem", getWarrantyItemDetails())
+            val dialog = MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cancel")
+                .setMessage("Are you sure you want to cancel edit? ")
+                .setNegativeButton("No") { dialog, which ->
+                    dialog.cancel()
                 }
-                findNavController().navigate(
-                    R.id.action_editFragment_to_warrantyFragment,
-                    bundle
-                )
-            }
-            .create()
+                .setPositiveButton("Yes") { dialog, which ->
 
-        dialog.show()
-
+                    val bundle = Bundle().apply {
+                        putSerializable("warrantyItem", getWarrantyItemDetails())
+                    }
+                    findNavController().navigate(
+                        R.id.action_editFragment_to_warrantyFragment,
+                        bundle
+                    )
+                }
+                .create()
+            dialog.show()
         return true
+        }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

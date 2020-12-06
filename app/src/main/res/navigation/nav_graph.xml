@@ -20,7 +20,11 @@
             />
         <action
             android:id="@+id/action_navigation_home_to_addFragment"
-            app:destination="@id/addFragment" />
+            app:destination="@id/addFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -36,7 +40,7 @@
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/warrantyFragment"
-        android:name="com.example.warrantyreminder.ui.WarrantyFragment"
+        android:name="com.example.warrantyreminder.ui.warranty.WarrantyFragment"
         android:label="WarrantyFragment" >
         <argument
             android:name="warrantyItem"
@@ -66,7 +70,7 @@
     </fragment>
     <fragment
         android:id="@+id/editFragment"
-        android:name="com.example.warrantyreminder.ui.EditFragment"
+        android:name="com.example.warrantyreminder.ui.warranty.EditWarrantyFragment"
         android:label="EditFragment" >
         <argument
             android:name="warrantyItem"
@@ -87,10 +91,21 @@
     </fragment>
     <fragment
         android:id="@+id/addFragment"
-        android:name="com.example.warrantyreminder.ui.AddWarrantyItemFragment"
+        android:name="com.example.warrantyreminder.ui.warranty.AddWarrantyFragment"
         android:label="AddFragment" >
         <action
             android:id="@+id/action_addFragment_to_warrantyFragment"
-            app:destination="@id/warrantyFragment" />
+            app:destination="@id/warrantyFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_addFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 </navigation>

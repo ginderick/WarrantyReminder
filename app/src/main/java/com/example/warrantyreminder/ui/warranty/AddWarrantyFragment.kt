@@ -1,31 +1,20 @@
-package com.example.warrantyreminder.ui
+package com.example.warrantyreminder.ui.warranty
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentAddWarrantyBinding
-import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.ui.home.HomeViewModel
-import com.example.warrantyreminder.ui.register.EditViewModel
-import com.google.android.gms.tasks.Task
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class AddWarrantyItemFragment : Fragment() {
+class AddWarrantyFragment : Fragment() {
 
     var TAG: String = "lifecycle"
 
@@ -37,6 +26,7 @@ class AddWarrantyItemFragment : Fragment() {
     private val binding get() = _binding!!
     private val warrantyCollectionRef = Firebase.firestore.collection("warranty")
     private lateinit var warrantyItemId: String
+    private lateinit var timestamp: Timestamp
 
 
     override fun onCreateView(
@@ -57,26 +47,10 @@ class AddWarrantyItemFragment : Fragment() {
         inflater.inflate(R.menu.menu_save, menu)
     }
 
-//    private fun addWarrantyItem() {
-//        warrantyCollectionRef.document().set(
-//            WarrantyItem(
-//                itemName = etItemName.text.toString(),
-//                itemDescription = etItemDescription.text.toString(),
-//                expirationDate = etExpiryDate.text.toString(),
-//            )
-//        ).addOnSuccessListener { it ->
-//            warrantyItemId = "here"
-//        }
-//
-//        Log.d(TAG, warrantyItemId)
-//        Toast.makeText(context, "add warrantyItem $warrantyItemId", Toast.LENGTH_LONG).show()
-//
-//
-//    }
-
     private fun addWarrantyItem(warrantyItem: WarrantyItem) {
         homeViewModel.getDocumentReference().apply {
             warrantyItemId = this.id
+            timestamp = Timestamp.now()
             this.set(warrantyItem)
         }
     }
@@ -116,6 +90,11 @@ class AddWarrantyItemFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 

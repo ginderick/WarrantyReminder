@@ -29,6 +29,7 @@ class EditWarrantyFragment : Fragment() {
     private val binding get() = _binding!!
     val args: EditWarrantyFragmentArgs by navArgs()
     private val warrantyCollectionRef = Firebase.firestore.collection("warranty")
+    private lateinit var warrantyItem: WarrantyItem
 
 
     override fun onCreateView(
@@ -46,13 +47,11 @@ class EditWarrantyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val item = args.warrantyItem
+        warrantyItem = args.warrantyItem
 
-        etItemName.setText(item.itemName)
-        etItemDescription.setText(item.itemDescription)
-        etExpiryDate.setText(item.expirationDate)
-
-
+        textItemName.editText?.setText(warrantyItem.itemName)
+        etItemDescription.editText?.setText(warrantyItem.itemDescription)
+        etExpiryDate.setText(warrantyItem.expirationDate)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -60,18 +59,20 @@ class EditWarrantyFragment : Fragment() {
         inflater.inflate(R.menu.menu_save, menu)
     }
 
+    private fun sendWarrantyItemBundle() {
+        val bundle = Bundle().apply {
+            putSerializable("warrantyItem", getWarrantyItemDetails())
+        }
+        findNavController().navigate(
+            R.id.action_editFragment_to_warrantyFragment,
+            bundle
+        )
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.save_item -> {
-                updateWarrantyItem(args.warrantyItem.id)
-                Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
-                val bundle = Bundle().apply {
-                    putSerializable("warrantyItem", getWarrantyItemDetails())
-                }
-                findNavController().navigate(
-                    R.id.action_editFragment_to_warrantyFragment,
-                    bundle
-                )
+                updateWarrantyItem()
                 true
             }
             else -> showCancelWarrantyEditDialog()
@@ -81,24 +82,38 @@ class EditWarrantyFragment : Fragment() {
 
     private fun getWarrantyItemDetails(): WarrantyItem {
 
-        Log.d(TAG, args.warrantyItem.id)
         return WarrantyItem(
-            //return the id to WarrantyFragment
             id = args.warrantyItem.id,
-            itemName = etItemName.text.toString(),
-            itemDescription = etItemDescription.text.toString(),
+            itemName = textItemName.editText?.text.toString(),
+            itemDescription = etItemDescription.editText?.text.toString(),
             expirationDate = etExpiryDate.text.toString(),
         )
     }
 
-    private fun updateWarrantyItem(warrantyItemId: String) {
-        warrantyCollectionRef.document(warrantyItemId).update(
-            mapOf(
-                "itemName" to etItemName.text.toString(),
-                "itemDescription" to etItemDescription.text.toString(),
-                "expirationDate" to etExpiryDate.text.toString()
-            )
-        )
+    private fun updateWarrantyItem() {
+        when {
+            textItemName.editText?.text.toString().isEmpty() -> {
+                textItemName.error = "Enter name"
+            }
+            etItemDescription.editText?.text.toString().isEmpty() -> {
+                etItemDescription.error = "Enter description"
+                textItemName.error = null
+            }
+            else -> {
+                textItemName.error = null
+                etItemDescription.error = null
+                warrantyCollectionRef.document(warrantyItem.id).update(
+                    mapOf(
+                        "itemName" to textItemName.editText?.text.toString(),
+                        "itemDescription" to etItemDescription.editText?.text.toString(),
+                        "expirationDate" to etExpiryDate.text.toString(),
+                        "imageUrl" to ""
+                    )
+                )
+                sendWarrantyItemBundle()
+                Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun showCancelWarrantyEditDialog(): Boolean {

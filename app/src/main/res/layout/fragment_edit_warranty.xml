@@ -1,59 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:padding="40dp">
 
-    <TextView
-        android:id="@+id/tvItemNameText"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_margin="20dp"
-        android:text="Item Name: "
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/etItemName"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textItemName"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/tvItemNameText"
-        android:layout_margin="20dp"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:hint="Item name"
+        app:errorEnabled="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/tvItemDescriptionText"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_below="@+id/etItemName"
-        android:layout_margin="20dp"
-        android:text="Description: "
-        android:textStyle="bold" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etItemNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/etItemDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@+id/tvItemDescriptionText"
-        android:layout_margin="20dp"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:hint="Description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textItemName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <TextView
         android:id="@+id/tvExpiryDateText"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_below="@+id/etItemDescription"
-        android:layout_margin="20dp"
+        android:layout_marginTop="48dp"
         android:text="Expiration Date:"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etItemDescription" />
 
     <EditText
         android:id="@+id/etExpiryDate"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@+id/tvExpiryDateText"
-        android:layout_margin="20dp"
-        android:padding="0dp"
-        android:textSize="15sp" />
+        android:layout_height="60dp"
+        android:background="@drawable/custom_input"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvExpiryDateText" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

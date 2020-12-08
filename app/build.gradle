@@ -121,7 +121,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:22.0.0'
     implementation 'com.firebaseui:firebase-ui-firestore:6.1.0'
 
-    //irestore
+    //firestore
     implementation 'com.google.firebase:firebase-firestore-ktx:22.0.0'
 
 

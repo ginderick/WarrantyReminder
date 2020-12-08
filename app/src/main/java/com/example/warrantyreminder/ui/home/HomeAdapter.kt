@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
 
@@ -57,6 +58,11 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
             tvItemName.text = model.itemName
             tvExpiryDate.text = model.expirationDate
             tvItemDescription.text = model.itemDescription
+
+            Glide.with(context)
+                .load(model.imageUrl)
+                .into(ivWarrantyItem)
+
 
             setOnClickListener {
                 onItemClickListener?.let { it(model) }

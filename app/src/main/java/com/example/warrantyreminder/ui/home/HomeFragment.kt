@@ -25,7 +25,6 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
     private val warrantyItemRef = FirebaseFirestore.getInstance()
-    private var warrantyItemId = ""
 
     override fun onStart() {
         super.onStart()
@@ -70,7 +69,6 @@ class HomeFragment : Fragment() {
                 val document = homeAdapter.snapshots.getSnapshot(position).toObject<WarrantyItem>()
                 val documentId = homeAdapter.snapshots.getSnapshot(position).id
 
-                warrantyItemId = documentId
                 homeViewModel.deleteItem(documentId)
 
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
@@ -98,9 +96,6 @@ class HomeFragment : Fragment() {
                 bundle
             )
         }
-
-
-
     }
 
     override fun onStop() {
@@ -125,7 +120,7 @@ class HomeFragment : Fragment() {
 
 
 
-    //TODO 1. Required fields before saving
+    //TODO 1. Required fields before saving - OK
     //TODO 2. Add image in model class
     //TODO 3. Fix Login Activity
     //TODO 4. Expiration Date convert to Date Dialog

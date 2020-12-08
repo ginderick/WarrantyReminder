@@ -12,6 +12,7 @@ data class WarrantyItem(
     val itemName: String = "",
     val itemDescription: String = "",
     val expirationDate: String = "",
+    val imageUrl: String = "",
     @ServerTimestamp
     var timeStamp: Timestamp? = null
 ) : Serializable

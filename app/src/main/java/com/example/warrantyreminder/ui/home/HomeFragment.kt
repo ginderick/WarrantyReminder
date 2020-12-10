@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -14,6 +15,7 @@ import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
@@ -49,6 +51,8 @@ class HomeFragment : Fragment() {
         fab_add.setOnClickListener {
             findNavController().navigate(R.id.addFragment)
         }
+
+
 
 
         //swipe to delete
@@ -98,13 +102,29 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun getCurrentUserID(): String? {
+        return FirebaseAuth.getInstance().currentUser?.uid
+
+    }
+
     override fun onStop() {
         super.onStop()
         homeAdapter.stopListening()
     }
 
     private fun setupRecyclerView() {
-        val query = warrantyItemRef.collection("warranty").orderBy("timeStamp", Query.Direction.DESCENDING)
+
+        val user = getCurrentUserID()
+
+
+        val query = warrantyItemRef.collection("users").document(user!!).collection("warranty").orderBy(
+            "timeStamp",
+            Query.Direction.DESCENDING
+        )
+
+        Toast.makeText(context, query.toString(), Toast.LENGTH_LONG).show()
+
+
         val options = FirestoreRecyclerOptions.Builder<WarrantyItem>()
             .setQuery(query, WarrantyItem::class.java)
             .build()
@@ -122,6 +142,7 @@ class HomeFragment : Fragment() {
 
     //TODO 1. Required fields before saving - OK
     //TODO 2. Add image in model class
-    //TODO 3. Fix Login Activity
+    //TODO 3. Fix Login Activity - OK
     //TODO 4. Expiration Date convert to Date Dialog
+    //TODO 5. Add signup button
 }

@@ -93,7 +93,7 @@ class HomeFragment : Fragment() {
 
             //send data to WarrantyFragment
             val bundle = Bundle().apply {
-                putSerializable("warrantyItem", it)
+                putString("warrantyItemId", it.id)
             }
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,

@@ -13,9 +13,11 @@ import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.ui.register.EditViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
+import com.google.firebase.Timestamp
 
 class EditWarrantyFragment : Fragment() {
 
@@ -28,8 +30,9 @@ class EditWarrantyFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     val args: EditWarrantyFragmentArgs by navArgs()
-    private val warrantyCollectionRef = Firebase.firestore.collection("warranty")
+    private val warrantyCollectionRef = Firebase.firestore.collection("users")
     private lateinit var warrantyItem: WarrantyItem
+    private val user = FirebaseAuth.getInstance().currentUser?.uid
 
 
     override fun onCreateView(
@@ -102,11 +105,12 @@ class EditWarrantyFragment : Fragment() {
             else -> {
                 textItemName.error = null
                 etItemDescription.error = null
-                warrantyCollectionRef.document(warrantyItem.id).update(
+                warrantyCollectionRef.document(user!!).collection("warranty").document(warrantyItem.id).update(
                     mapOf(
                         "itemName" to textItemName.editText?.text.toString(),
                         "itemDescription" to etItemDescription.editText?.text.toString(),
                         "expirationDate" to etExpiryDate.text.toString(),
+                        "timestamp" to Timestamp.now(),
                         "imageUrl" to ""
                     )
                 )

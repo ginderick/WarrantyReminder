@@ -44,11 +44,9 @@ class FirestoreRepository {
     }
 
 
-    fun updateWarrantyItem(warrantyItemId : String): Task<DocumentSnapshot> {
-        return firestore.collection("warranty")
+    fun getWarrantyItem(warrantyItemId : String) = firestore.collection("users").document(user!!).collection("warranty")
             .document(warrantyItemId)
-            .get()
-    }
+
 
     fun getDocumentReference() = firestore.collection("users").document(user!!).collection("warranty").document()
 

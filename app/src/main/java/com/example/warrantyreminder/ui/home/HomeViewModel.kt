@@ -37,4 +37,6 @@ class HomeViewModel : ViewModel() {
 
     fun getDocumentReference() =firestoreRepository.getDocumentReference()
 
+    fun getWarrantyItem(warrantyItemId: String) = firestoreRepository.getWarrantyItem(warrantyItemId)
+
 }

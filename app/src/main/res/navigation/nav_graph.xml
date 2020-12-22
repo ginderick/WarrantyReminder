@@ -61,17 +61,12 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="warrantyItemId"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"/>
+            app:argType="string"/>
     </fragment>
     <fragment
         android:id="@+id/editFragment"
         android:name="com.example.warrantyreminder.ui.warranty.EditWarrantyFragment"
         android:label="EditFragment" >
-        <argument
-            android:name="warrantyItem"
-            app:argType="com.example.warrantyreminder.model.WarrantyItem" />
         <action
             android:id="@+id/action_editFragment_to_warrantyFragment"
             app:destination="@id/warrantyFragment"
@@ -81,10 +76,7 @@
             app:popExitAnim="@anim/slide_out_right"/>
         <argument
             android:name="warrantyItemId"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null"
-            />
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -104,5 +96,8 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <argument
+            android:name="warrantyItemId"
+            app:argType="string" />
     </fragment>
 </navigation>

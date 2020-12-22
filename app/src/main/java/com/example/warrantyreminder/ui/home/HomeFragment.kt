@@ -1,11 +1,13 @@
 package com.example.warrantyreminder.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,18 +22,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
     private val warrantyItemRef = FirebaseFirestore.getInstance()
 
-    override fun onStart() {
-        super.onStart()
-        homeAdapter.startListening()
-    }
 
 
     override fun onCreateView(
@@ -48,9 +48,24 @@ class HomeFragment : Fragment() {
 
         setupRecyclerView()
 
+        homeViewModel.queryList()
+
+        homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
+            homeAdapter.differ.submitList(it)
+        })
+
+        Log.d("WarrantyItem in HF", homeViewModel.warrantyItemList.toString())
+
+//        homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
+//            Log.d("warrantyList", it.toString())
+//            homeAdapter.differ.submitList(it)
+//        })
+
         fab_add.setOnClickListener {
             findNavController().navigate(R.id.addFragment)
         }
+
+
 
 
 
@@ -70,14 +85,13 @@ class HomeFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val document = homeAdapter.snapshots.getSnapshot(position).toObject<WarrantyItem>()
-                val documentId = homeAdapter.snapshots.getSnapshot(position).id
-
-                homeViewModel.deleteItem(documentId)
+                val warrantyItem = homeAdapter.differ.currentList[position]
+                val warrantyItemId = warrantyItem.id
+                homeViewModel.deleteItem(warrantyItemId)
 
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
                     setAction("Undo") {
-                        homeViewModel.saveItem(document!!)
+                        homeViewModel.addItem()
                     }
                     show()
                 }
@@ -85,7 +99,6 @@ class HomeFragment : Fragment() {
         }
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(rvHome)
-
         }
 
 
@@ -102,34 +115,8 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getCurrentUserID(): String? {
-        return FirebaseAuth.getInstance().currentUser?.uid
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-        homeAdapter.stopListening()
-    }
-
     private fun setupRecyclerView() {
-
-        val user = getCurrentUserID()
-
-
-        val query = warrantyItemRef.collection("users").document(user!!).collection("warranty").orderBy(
-            "timeStamp",
-            Query.Direction.DESCENDING
-        )
-
-        Toast.makeText(context, query.toString(), Toast.LENGTH_LONG).show()
-
-
-        val options = FirestoreRecyclerOptions.Builder<WarrantyItem>()
-            .setQuery(query, WarrantyItem::class.java)
-            .build()
-
-        homeAdapter = HomeAdapter(options)
+        homeAdapter = HomeAdapter()
 
 
         rvHome.apply {

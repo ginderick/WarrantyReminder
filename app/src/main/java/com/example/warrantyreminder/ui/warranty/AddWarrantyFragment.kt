@@ -1,6 +1,7 @@
 package com.example.warrantyreminder.ui.warranty
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -13,7 +14,10 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
+import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class AddWarrantyFragment : Fragment() {
 
     var TAG: String = "lifecycle"
@@ -24,9 +28,7 @@ class AddWarrantyFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val warrantyCollectionRef = Firebase.firestore.collection("warranty")
-    private lateinit var warrantyItemId: String
-    private lateinit var timestamp: Timestamp
+    private lateinit var warrantyItemIds: String
 
 
     override fun onCreateView(
@@ -48,8 +50,7 @@ class AddWarrantyFragment : Fragment() {
     }
 
 
-    private fun addWarrantyItem(warrantyItem: WarrantyItem) {
-
+    private fun addWarrantyItem() {
         when {
             textItemName.editText?.text.toString().isEmpty() -> {
                 textItemName.error = "Enter name"
@@ -59,37 +60,36 @@ class AddWarrantyFragment : Fragment() {
                 textItemName.error = null
             }
             else -> {
-                homeViewModel.getDocumentReference().apply {
-                    warrantyItemId = this.id
-                    timestamp = Timestamp.now()
-                    this.set(warrantyItem)
+
+                homeViewModel.apply {
+                    setWarrantyItem()
+                    createDocument()
+                    addItem()
                 }
+                warrantyItemIds = homeViewModel.warrantyItemId.value!!
                 sendWarrantyItemBundle()
             }
         }
     }
 
-    private fun getWarrantyItem(): WarrantyItem {
-        return WarrantyItem(
+    private fun setWarrantyItem() {
+         val warrantyItem =  WarrantyItem(
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
-            expirationDate = etExpiryDate.text.toString()
+            expirationDate = etExpiryDate.text.toString(),
+            imageUrl = ""
         )
+
+        homeViewModel.setWarrantyItem(warrantyItem)
     }
 
     //Send warrantyItem bundle to WarrantyFragment
     private fun sendWarrantyItemBundle() {
 
-        val warrantyItem = WarrantyItem(
-            id = warrantyItemId,
-            itemName = textItemName.editText?.text.toString(),
-            itemDescription = etItemDescription.editText?.text.toString(),
-            expirationDate = etExpiryDate.text.toString()
-        )
-
+        Log.d(TAG, "AddWarranty $warrantyItemIds")
         val bundle = Bundle().apply {
-            putSerializable(
-                "warrantyItem", warrantyItem
+            putString(
+                "warrantyItemId", warrantyItemIds
             )
         }
         findNavController().navigate(
@@ -101,7 +101,7 @@ class AddWarrantyFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.save_item -> {
-                addWarrantyItem(getWarrantyItem())
+                addWarrantyItem()
             }
         }
         return super.onOptionsItemSelected(item)

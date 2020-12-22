@@ -3,6 +3,8 @@ package com.example.warrantyreminder.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
@@ -13,24 +15,24 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 
 
-class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRecyclerAdapter<WarrantyItem, HomeAdapter.WarrantyItemViewHolder>(
-    options
-) {
+class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
 
+    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     private var onItemClickListener: ((WarrantyItem) -> Unit)? = null
-    var warrantyItemPosition: Int? = null
 
 
-    inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        override fun onClick(p0: View?) {
-
+    private val differCallback = object : DiffUtil.ItemCallback<WarrantyItem>() {
+        override fun areItemsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+            return oldItem.id == newItem.id
         }
 
+        override fun areContentsTheSame(oldItem: WarrantyItem, newItem: WarrantyItem): Boolean {
+            return oldItem == newItem
+        }
     }
 
-
-
+    val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WarrantyItemViewHolder {
         return WarrantyItemViewHolder(
@@ -46,30 +48,28 @@ class HomeAdapter(options: FirestoreRecyclerOptions<WarrantyItem>) : FirestoreRe
         onItemClickListener = listener
     }
 
+    override fun getItemCount(): Int {
+        return differ.currentList.size
+    }
 
 
-    override fun onBindViewHolder(
-        holder: WarrantyItemViewHolder,
-        position: Int,
-        model: WarrantyItem
-    ) {
+    override fun onBindViewHolder(holder: WarrantyItemViewHolder, position: Int) {
+        val warrantyItem = differ.currentList[position]
         holder.itemView.apply {
-            warrantyItemPosition = position
-            tvItemName.text = model.itemName
-            tvExpiryDate.text = model.expirationDate
-            tvItemDescription.text = model.itemDescription
+
+            tvItemName.text = warrantyItem.itemName
+            tvExpiryDate.text = warrantyItem.expirationDate
+            tvItemDescription.text = warrantyItem.itemDescription
 
             Glide.with(context)
-                .load(model.imageUrl)
+                .load(warrantyItem.imageUrl)
                 .into(ivWarrantyItem)
 
 
             setOnClickListener {
-                onItemClickListener?.let { it(model) }
+                onItemClickListener?.let { it(warrantyItem) }
             }
-
         }
-
     }
 
 

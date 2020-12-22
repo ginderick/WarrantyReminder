@@ -9,9 +9,7 @@ class EditViewModel : ViewModel() {
 
     private var firestoreRepository = FirestoreRepository()
 
-    fun saveItem(item: WarrantyItem) {
-        firestoreRepository.saveItem(item)
-    }
+
 
     fun deleteItem(item: String) {
         firestoreRepository.deleteItem(item).addOnSuccessListener {
@@ -21,7 +19,5 @@ class EditViewModel : ViewModel() {
                 Log.d("Firebase", "Delete failed")
             }
     }
-
-    fun getDocumentReference() = firestoreRepository.getDocumentReference()
 
 }

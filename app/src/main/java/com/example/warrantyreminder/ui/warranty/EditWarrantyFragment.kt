@@ -5,25 +5,29 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
-import com.example.warrantyreminder.ui.register.EditViewModel
+import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
-import com.google.firebase.Timestamp
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 class EditWarrantyFragment : Fragment() {
 
     var TAG: String = "lifecycle"
 
-    private lateinit var editViewModel: EditViewModel
     private var _binding: FragmentEditWarrantyBinding? = null
 
     // This property is only valid between onCreateView and
@@ -31,8 +35,9 @@ class EditWarrantyFragment : Fragment() {
     private val binding get() = _binding!!
     val args: EditWarrantyFragmentArgs by navArgs()
     private val warrantyCollectionRef = Firebase.firestore.collection("users")
-    private lateinit var warrantyItem: WarrantyItem
     private val user = FirebaseAuth.getInstance().currentUser?.uid
+    private lateinit var homeViewModel: HomeViewModel
+    lateinit var itemId: String
 
 
     override fun onCreateView(
@@ -40,8 +45,8 @@ class EditWarrantyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        editViewModel =
-            ViewModelProvider(this).get(EditViewModel::class.java)
+        homeViewModel =
+            ViewModelProvider(this).get(HomeViewModel::class.java)
         setHasOptionsMenu(true)
 
         _binding = FragmentEditWarrantyBinding.inflate(inflater, container, false)
@@ -50,21 +55,44 @@ class EditWarrantyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        warrantyItem = args.warrantyItem
 
-        textItemName.editText?.setText(warrantyItem.itemName)
-        etItemDescription.editText?.setText(warrantyItem.itemDescription)
-        etExpiryDate.setText(warrantyItem.expirationDate)
+        val warrantyItemId = args.warrantyItemId
+        itemId = warrantyItemId
+        Log.d("EditWarranty", itemId)
+
+        homeViewModel.apply {
+            getWarrantyItem(itemId)
+            warrantyItem.observe(viewLifecycleOwner, Observer {
+                textItemName.editText?.setText(it.itemName)
+                etItemDescription.editText?.setText(it.itemDescription)
+                etExpiryDate.setText(it.expirationDate)
+            })
+        }
+
+
+        fab_edit.setOnClickListener {
+            warrantyCollectionRef.document(user!!).collection("warranty").document(itemId).update(
+                mapOf(
+                    "itemName" to textItemName.editText?.text.toString(),
+                    "itemDescription" to etItemDescription.editText?.text.toString(),
+                    "expirationDate" to etExpiryDate.text.toString(),
+                    "imageUrl" to ""
+                )
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_save, menu)
+        Log.d("EditWarranty", "onCreateOptionsMenuCalled")
     }
 
     private fun sendWarrantyItemBundle() {
+
+        Log.d("EditWarranty", "Send bundle $itemId")
         val bundle = Bundle().apply {
-            putSerializable("warrantyItem", getWarrantyItemDetails())
+            putString("warrantyItemId", itemId)
         }
         findNavController().navigate(
             R.id.action_editFragment_to_warrantyFragment,
@@ -73,6 +101,7 @@ class EditWarrantyFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("EditWarranty", "onOptionsItemSelectedCalled")
         return when (item.itemId) {
             R.id.save_item -> {
                 updateWarrantyItem()
@@ -80,13 +109,13 @@ class EditWarrantyFragment : Fragment() {
             }
             else -> showCancelWarrantyEditDialog()
         }
-
     }
 
     private fun getWarrantyItemDetails(): WarrantyItem {
+        Log.d("EditWarranty", "getWarrantyItemDetailsCalled")
 
         return WarrantyItem(
-            id = args.warrantyItem.id,
+            id = args.warrantyItemId!!,
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
             expirationDate = etExpiryDate.text.toString(),
@@ -94,6 +123,7 @@ class EditWarrantyFragment : Fragment() {
     }
 
     private fun updateWarrantyItem() {
+        Log.d("EditWarranty", "updateWarrantyItemCalled")
         when {
             textItemName.editText?.text.toString().isEmpty() -> {
                 textItemName.error = "Enter name"
@@ -105,15 +135,16 @@ class EditWarrantyFragment : Fragment() {
             else -> {
                 textItemName.error = null
                 etItemDescription.error = null
-                warrantyCollectionRef.document(user!!).collection("warranty").document(warrantyItem.id).update(
-                    mapOf(
-                        "itemName" to textItemName.editText?.text.toString(),
-                        "itemDescription" to etItemDescription.editText?.text.toString(),
-                        "expirationDate" to etExpiryDate.text.toString(),
-                        "timestamp" to Timestamp.now(),
-                        "imageUrl" to ""
+                Log.d("EditWarrantyFragment", itemId)
+                warrantyCollectionRef.document(user!!).collection("warranty").document(itemId)
+                    .update(
+                        mapOf(
+                            "itemName" to textItemName.editText?.text.toString(),
+                            "itemDescription" to etItemDescription.editText?.text.toString(),
+                            "expirationDate" to etExpiryDate.text.toString(),
+                            "imageUrl" to ""
+                        )
                     )
-                )
                 sendWarrantyItemBundle()
                 Toast.makeText(context, "Saved Item", Toast.LENGTH_LONG).show()
             }
@@ -122,27 +153,29 @@ class EditWarrantyFragment : Fragment() {
 
     private fun showCancelWarrantyEditDialog(): Boolean {
 
+        Log.d("EditWarranty", "showCancelWarrantyEditDialogCalled")
 
-            val dialog = MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Cancel")
-                .setMessage("Are you sure you want to cancel edit? ")
-                .setNegativeButton("No") { dialog, which ->
-                    dialog.cancel()
-                }
-                .setPositiveButton("Yes") { dialog, which ->
 
-                    val bundle = Bundle().apply {
-                        putSerializable("warrantyItem", getWarrantyItemDetails())
-                    }
-                    findNavController().navigate(
-                        R.id.action_editFragment_to_warrantyFragment,
-                        bundle
-                    )
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Cancel")
+            .setMessage("Are you sure you want to cancel edit? ")
+            .setNegativeButton("No") { dialog, which ->
+                dialog.cancel()
+            }
+            .setPositiveButton("Yes") { dialog, which ->
+
+                val bundle = Bundle().apply {
+                    putSerializable("warrantyItem", getWarrantyItemDetails())
                 }
-                .create()
-            dialog.show()
+                findNavController().navigate(
+                    R.id.action_editFragment_to_warrantyFragment,
+                    bundle
+                )
+            }
+            .create()
+        dialog.show()
         return true
-        }
+    }
 
 
     override fun onDestroyView() {

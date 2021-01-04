@@ -52,7 +52,6 @@ class WarrantyFragment : Fragment() {
 
         val warrantyItemId = args.warrantyItemId
         itemId = warrantyItemId
-        Log.d(TAG, "WarrantyFragment $itemId")
 
         viewLifecycleOwner.lifecycleScope.launch {
             homeViewModel.apply {
@@ -83,6 +82,7 @@ class WarrantyFragment : Fragment() {
 
         val bundle = Bundle().apply {
             putString("warrantyItemId", itemId)
+            putString("operationType", "EDITING")
         }
         findNavController().navigate(
             R.id.action_warrantyFragment_to_editFragment,

@@ -30,9 +30,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     lateinit var homeAdapter: HomeAdapter
-    private val warrantyItemRef = FirebaseFirestore.getInstance()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,21 +51,13 @@ class HomeFragment : Fragment() {
             homeAdapter.differ.submitList(it)
         })
 
-        Log.d("WarrantyItem in HF", homeViewModel.warrantyItemList.toString())
-
-//        homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
-//            Log.d("warrantyList", it.toString())
-//            homeAdapter.differ.submitList(it)
-//        })
-
         fab_add.setOnClickListener {
-            findNavController().navigate(R.id.addFragment)
+            val bundle = Bundle().apply {
+                putString("operationType", "CREATING")
+                putString("warrantyItemId", "")
+            }
+            findNavController().navigate(R.id.editFragment, bundle)
         }
-
-
-
-
-
 
         //swipe to delete
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
@@ -107,6 +96,7 @@ class HomeFragment : Fragment() {
             //send data to WarrantyFragment
             val bundle = Bundle().apply {
                 putString("warrantyItemId", it.id)
+                putString("operationTypeString", "EDITING")
             }
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,
@@ -127,7 +117,6 @@ class HomeFragment : Fragment() {
 
 
 
-    //TODO 1. Required fields before saving - OK
     //TODO 2. Add image in model class
     //TODO 3. Fix Login Activity - OK
     //TODO 4. Expiration Date convert to Date Dialog

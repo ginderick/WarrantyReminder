@@ -18,13 +18,6 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
-        <action
-            android:id="@+id/action_navigation_home_to_addFragment"
-            app:destination="@id/addFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -77,27 +70,8 @@
         <argument
             android:name="warrantyItemId"
             app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/addFragment"
-        android:name="com.example.warrantyreminder.ui.warranty.AddWarrantyFragment"
-        android:label="AddFragment" >
-        <action
-            android:id="@+id/action_addFragment_to_warrantyFragment"
-            app:destination="@id/warrantyFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
-        <action
-            android:id="@+id/action_addFragment_to_navigation_home"
-            app:destination="@id/navigation_home"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
         <argument
-            android:name="warrantyItemId"
+            android:name="operationType"
             app:argType="string" />
     </fragment>
 </navigation>

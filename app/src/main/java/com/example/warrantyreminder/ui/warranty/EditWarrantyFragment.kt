@@ -26,8 +26,6 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class EditWarrantyFragment : Fragment() {
 
-    var TAG: String = "lifecycle"
-
     private var _binding: FragmentEditWarrantyBinding? = null
 
     // This property is only valid between onCreateView and
@@ -38,7 +36,13 @@ class EditWarrantyFragment : Fragment() {
     private val user = FirebaseAuth.getInstance().currentUser?.uid
     private lateinit var homeViewModel: HomeViewModel
     lateinit var itemId: String
+    lateinit var operationType: String
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val operationTypeString = args.operationType
+        operationType = operationTypeString!!
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,40 +61,31 @@ class EditWarrantyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val warrantyItemId = args.warrantyItemId
-        itemId = warrantyItemId
-        Log.d("EditWarranty", itemId)
 
-        homeViewModel.apply {
-            getWarrantyItem(itemId)
-            warrantyItem.observe(viewLifecycleOwner, Observer {
-                textItemName.editText?.setText(it.itemName)
-                etItemDescription.editText?.setText(it.itemDescription)
-                etExpiryDate.setText(it.expirationDate)
-            })
-        }
+        itemId = warrantyItemId!!
 
+        if (operationType == "CREATING") {
 
-        fab_edit.setOnClickListener {
-            warrantyCollectionRef.document(user!!).collection("warranty").document(itemId).update(
-                mapOf(
-                    "itemName" to textItemName.editText?.text.toString(),
-                    "itemDescription" to etItemDescription.editText?.text.toString(),
-                    "expirationDate" to etExpiryDate.text.toString(),
-                    "imageUrl" to ""
-                )
-            )
+        } else if (operationType == "EDITING") {
+
+            homeViewModel.apply {
+                getWarrantyItem(itemId)
+                warrantyItem.observe(viewLifecycleOwner, Observer {
+                    textItemName.editText?.setText(it.itemName)
+                    etItemDescription.editText?.setText(it.itemDescription)
+                    etExpiryDate.setText(it.expirationDate)
+                })
+            }
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_save, menu)
-        Log.d("EditWarranty", "onCreateOptionsMenuCalled")
     }
 
     private fun sendWarrantyItemBundle() {
 
-        Log.d("EditWarranty", "Send bundle $itemId")
         val bundle = Bundle().apply {
             putString("warrantyItemId", itemId)
         }
@@ -100,19 +95,27 @@ class EditWarrantyFragment : Fragment() {
         )
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("EditWarranty", "onOptionsItemSelectedCalled")
+
         return when (item.itemId) {
+
             R.id.save_item -> {
-                updateWarrantyItem()
+                if (operationType == "CREATING") {
+                    addWarrantyItem()
+                } else {
+                    updateWarrantyItem()
+                }
                 true
             }
-            else -> showCancelWarrantyEditDialog()
+            else -> when(operationType) {
+                "CREATING" -> super.onOptionsItemSelected(item)
+                else -> showCancelWarrantyEditDialog()
+            }
         }
     }
 
     private fun getWarrantyItemDetails(): WarrantyItem {
-        Log.d("EditWarranty", "getWarrantyItemDetailsCalled")
 
         return WarrantyItem(
             id = args.warrantyItemId!!,
@@ -121,6 +124,41 @@ class EditWarrantyFragment : Fragment() {
             expirationDate = etExpiryDate.text.toString(),
         )
     }
+
+
+    private fun addWarrantyItem() {
+        when {
+            textItemName.editText?.text.toString().isEmpty() -> {
+                textItemName.error = "Enter name"
+            }
+            etItemDescription.editText?.text.toString().isEmpty() -> {
+                etItemDescription.error = "Enter description"
+                textItemName.error = null
+            }
+            else -> {
+
+                homeViewModel.apply {
+                    setWarrantyItem()
+                    createDocument()
+                    addItem()
+                }
+                itemId = homeViewModel.warrantyItemId.value!!
+                sendWarrantyItemBundle()
+            }
+        }
+    }
+
+    private fun setWarrantyItem() {
+        val warrantyItem = WarrantyItem(
+            itemName = textItemName.editText?.text.toString(),
+            itemDescription = etItemDescription.editText?.text.toString(),
+            expirationDate = etExpiryDate.text.toString(),
+            imageUrl = ""
+        )
+
+        homeViewModel.setWarrantyItem(warrantyItem)
+    }
+
 
     private fun updateWarrantyItem() {
         Log.d("EditWarranty", "updateWarrantyItemCalled")
@@ -153,8 +191,6 @@ class EditWarrantyFragment : Fragment() {
 
     private fun showCancelWarrantyEditDialog(): Boolean {
 
-        Log.d("EditWarranty", "showCancelWarrantyEditDialogCalled")
-
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Cancel")
@@ -165,7 +201,7 @@ class EditWarrantyFragment : Fragment() {
             .setPositiveButton("Yes") { dialog, which ->
 
                 val bundle = Bundle().apply {
-                    putSerializable("warrantyItem", getWarrantyItemDetails())
+                    putString("warrantyItemId", itemId)
                 }
                 findNavController().navigate(
                     R.id.action_editFragment_to_warrantyFragment,

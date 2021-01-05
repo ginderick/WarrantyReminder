@@ -49,6 +49,7 @@ class EditWarrantyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
         setHasOptionsMenu(true)
@@ -115,17 +116,6 @@ class EditWarrantyFragment : Fragment() {
         }
     }
 
-    private fun getWarrantyItemDetails(): WarrantyItem {
-
-        return WarrantyItem(
-            id = args.warrantyItemId!!,
-            itemName = textItemName.editText?.text.toString(),
-            itemDescription = etItemDescription.editText?.text.toString(),
-            expirationDate = etExpiryDate.text.toString(),
-        )
-    }
-
-
     private fun addWarrantyItem() {
         when {
             textItemName.editText?.text.toString().isEmpty() -> {
@@ -137,8 +127,9 @@ class EditWarrantyFragment : Fragment() {
             }
             else -> {
 
+                val warrantyItem = createWarrantyItem()
                 homeViewModel.apply {
-                    setWarrantyItem()
+                    setWarrantyItem(warrantyItem)
                     createDocument()
                     addItem()
                 }
@@ -148,15 +139,13 @@ class EditWarrantyFragment : Fragment() {
         }
     }
 
-    private fun setWarrantyItem() {
-        val warrantyItem = WarrantyItem(
+    private fun createWarrantyItem(): WarrantyItem {
+        return WarrantyItem(
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
             expirationDate = etExpiryDate.text.toString(),
             imageUrl = ""
         )
-
-        homeViewModel.setWarrantyItem(warrantyItem)
     }
 
 
@@ -190,7 +179,6 @@ class EditWarrantyFragment : Fragment() {
     }
 
     private fun showCancelWarrantyEditDialog(): Boolean {
-
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Cancel")

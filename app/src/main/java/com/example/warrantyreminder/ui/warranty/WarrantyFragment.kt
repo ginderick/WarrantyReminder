@@ -67,6 +67,7 @@ class WarrantyFragment : Fragment() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("TAG", "onOptionsItemSelected called")
         when (item.itemId) {
             R.id.edit_settings -> {
                 editWarrantyItem()

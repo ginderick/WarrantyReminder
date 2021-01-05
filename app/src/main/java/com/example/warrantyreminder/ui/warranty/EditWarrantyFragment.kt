@@ -162,7 +162,6 @@ class EditWarrantyFragment : Fragment() {
             else -> {
                 textItemName.error = null
                 etItemDescription.error = null
-                Log.d("EditWarrantyFragment", itemId)
                 warrantyCollectionRef.document(user!!).collection("warranty").document(itemId)
                     .update(
                         mapOf(

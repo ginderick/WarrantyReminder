@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.warrantyreminder.MainActivity
 import com.example.warrantyreminder.databinding.ActivityLoginBinding
-import com.example.warrantyreminder.ui.register.RegisterActivity
+import com.example.warrantyreminder.ui.login.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth

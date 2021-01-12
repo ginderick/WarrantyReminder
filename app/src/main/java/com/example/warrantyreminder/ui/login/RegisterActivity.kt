@@ -1,15 +1,11 @@
-package com.example.warrantyreminder.ui.register
+package com.example.warrantyreminder.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.warrantyreminder.R
-import com.example.warrantyreminder.databinding.ActivityLoginBinding
 import com.example.warrantyreminder.databinding.ActivityRegisterBinding
-import com.example.warrantyreminder.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase

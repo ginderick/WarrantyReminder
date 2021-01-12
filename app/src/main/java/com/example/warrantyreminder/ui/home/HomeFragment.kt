@@ -79,9 +79,6 @@ class HomeFragment : Fragment() {
                 homeViewModel.deleteItem(warrantyItemId)
 
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
-                    setAction("Undo") {
-                        homeViewModel.addItem()
-                    }
                     show()
                 }
             }
@@ -118,7 +115,7 @@ class HomeFragment : Fragment() {
 
 
     //TODO 2. Add image in model class
-    //TODO 3. Fix Login Activity - OK
+    //TODO 3. Fix Back button due to it navigates back to register activity
     //TODO 4. Expiration Date convert to Date Dialog
     //TODO 5. Add signup button
 }

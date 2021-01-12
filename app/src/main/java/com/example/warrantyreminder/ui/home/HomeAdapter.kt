@@ -60,10 +60,11 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
             tvItemName.text = warrantyItem.itemName
             tvExpiryDate.text = warrantyItem.expirationDate
             tvItemDescription.text = warrantyItem.itemDescription
+            ivWarrantyItem.setImageResource(R.drawable.iphone)
 
-            Glide.with(context)
-                .load(warrantyItem.imageUrl)
-                .into(ivWarrantyItem)
+//            Glide.with(context)
+//                .load(warrantyItem.imageUrl)
+//                .into(ivWarrantyItem)
 
 
             setOnClickListener {

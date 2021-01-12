@@ -28,7 +28,6 @@ class WarrantyFragment : Fragment() {
     private var _binding: FragmentWarrantyBinding? = null
     private val args: WarrantyFragmentArgs by navArgs()
     private lateinit var itemId: String
-    var TAG: String = "lifecycle"
 
     // This property is only valid between onCreateView and
     // onDestroyView.

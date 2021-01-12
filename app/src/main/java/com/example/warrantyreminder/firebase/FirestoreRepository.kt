@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 
 import com.example.warrantyreminder.model.WarrantyItem
+import com.example.warrantyreminder.model.WarrantyPhoto
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -21,19 +22,28 @@ class FirestoreRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser!!.uid
-    private lateinit var warrantyItem: WarrantyItem
 
-    fun addItem(warrantyItemId: String) {
-        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId)
-            .set(warrantyItem)
+
+    fun addWarrantyItem(warrantyItem: WarrantyItem, warrantyItemId: String) {
+        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).set(warrantyItem)
     }
 
-    fun setWarrantyItem(item: WarrantyItem) {
-        warrantyItem = item
+    fun createWarrantyItem(): DocumentReference {
+        return firestore.collection("users").document(user).collection("warranty").document()
     }
 
-    fun createDocument() =
-        firestore.collection("users").document(user).collection("warranty").document()
+    fun addPhoto(warrantyItemId: String) {
+        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").document()
+    }
+
+    fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {
+        val document = firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").document()
+        val photoId = document.id
+        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").
+        document(photoId).set(warrantyPhoto)
+    }
+
+
 
     fun deleteItem(warrantyItem: String): Task<Void> {
         return firestore.collection("users").document(user).collection("warranty")

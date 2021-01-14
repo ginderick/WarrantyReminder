@@ -67,8 +67,7 @@ class EditWarrantyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         setHasOptionsMenu(true)
 
         _binding = FragmentEditWarrantyBinding.inflate(inflater, container, false)
@@ -80,6 +79,7 @@ class EditWarrantyFragment : Fragment() {
 
         when (operationType) {
             "CREATING" -> {
+
             }
             "EDITING" -> {
 
@@ -138,7 +138,7 @@ class EditWarrantyFragment : Fragment() {
     }
 
     private fun downloadImage() {
-        val uri = "https://firebasestorage.googleapis.com/v0/b/androidprojects-280512.appspot.com/o/images%2F0FQxrztNps4hGBnbPrYd%2Fimage%3A106?alt=media&token=b0897649-c4f0-45dc-88b2-f4d8af1c6fee"
+        val uri = photo.remoteUri
         Glide.with(requireContext())
             .load(uri)
             .into(warrantyDownloadImage)

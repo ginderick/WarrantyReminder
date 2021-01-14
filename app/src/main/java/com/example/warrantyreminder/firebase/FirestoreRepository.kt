@@ -1,7 +1,6 @@
 package com.example.warrantyreminder.firebase
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
@@ -22,39 +21,67 @@ class FirestoreRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var currentPhotoId: String
+    private val warrantyCollection = firestore.collection("users").document(user).collection("warranty")
 
 
     fun addWarrantyItem(warrantyItem: WarrantyItem, warrantyItemId: String) {
-        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).set(warrantyItem)
+        warrantyCollection.document(warrantyItemId)
+            .set(warrantyItem)
     }
 
     fun createWarrantyItem(): DocumentReference {
-        return firestore.collection("users").document(user).collection("warranty").document()
+        return warrantyCollection.document()
     }
 
     fun addPhoto(warrantyItemId: String) {
-        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").document()
+        warrantyCollection.document(warrantyItemId)
+            .collection("photos").document()
     }
 
     fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {
-        val document = firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").document()
-        val photoId = document.id
-        firestore.collection("users").document(user).collection("warranty").document(warrantyItemId).collection("photos").
-        document(photoId).set(warrantyPhoto)
+        val photoCollection = warrantyCollection.document(warrantyItemId).collection("photos")
+
+        photoCollection.get().addOnSuccessListener {
+            if (it.isEmpty) {
+                val document = photoCollection.document()
+                currentPhotoId = document.id
+                photoCollection.document(currentPhotoId).set(warrantyPhoto)
+            }
+
+            //update remoteUri of the photo
+            photoCollection.document(currentPhotoId).update(
+                mapOf(
+                    "remoteUri" to warrantyPhoto.remoteUri,
+                    "dateTaken" to Timestamp.now()
+                )
+            )
+
+            warrantyCollection.document(warrantyItemId).update(
+                mapOf(
+                    "imageUrl" to warrantyPhoto.remoteUri
+                )
+            )
+        }
     }
-
-
 
     fun deleteItem(warrantyItem: String): Task<Void> {
-        return firestore.collection("users").document(user).collection("warranty")
-            .document(warrantyItem)
-            .delete()
+        warrantyCollection.document(warrantyItem).collection("photos").get().addOnCompleteListener {
+            //get the id of the document on the sub-collection photo
+            val id = it.result!!.documents[0].id
+            warrantyCollection.document(warrantyItem).collection("photos").document(id).delete()
+        }
+
+        return warrantyCollection.document(warrantyItem).delete()
     }
+
+
+
 
     fun getWarrantyItem(warrantyItemId: String): Flow<WarrantyItem> {
         return callbackFlow {
-            val listener = firestore.collection("users").document(user).collection("warranty")
-                .document(warrantyItemId).addSnapshotListener { value, _ ->
+            val listener =
+                warrantyCollection.document(warrantyItemId).addSnapshotListener { value, _ ->
                     val warrantyItem = value?.toObject<WarrantyItem>()!!
                     offer(warrantyItem)
                 }
@@ -66,22 +93,21 @@ class FirestoreRepository {
 
     fun queryWarrantyList(): Flow<List<WarrantyItem>> {
         return callbackFlow {
-            val listener =
-                firestore.collection("users").document(user).collection("warranty").orderBy(
-                    "timeStamp",
-                    Query.Direction.DESCENDING
-                ).addSnapshotListener { value, error ->
+            val listener = warrantyCollection.orderBy(
+                "timeStamp",
+                Query.Direction.DESCENDING
+            ).addSnapshotListener { value, error ->
 
-                    if (error != null) {
-                        cancel(message = "Error fetching items", cause = error)
-                        return@addSnapshotListener
-                    }
-
-                    val map =
-                        value?.documents!!.mapNotNull { it.toObject(WarrantyItem::class.java) }
-                    Log.d("warrantyItem", map.toString())
-                    offer(map)
+                if (error != null) {
+                    cancel(message = "Error fetching items", cause = error)
+                    return@addSnapshotListener
                 }
+
+                val map =
+                    value?.documents!!.mapNotNull { it.toObject(WarrantyItem::class.java) }
+                Log.d("warrantyItem", map.toString())
+                offer(map)
+            }
 
             awaitClose {
                 listener.remove()

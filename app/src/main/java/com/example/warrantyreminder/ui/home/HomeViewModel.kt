@@ -50,6 +50,8 @@ class HomeViewModel : ViewModel() {
         firestoreRepository.deleteItem(item)
     }
 
+
+
     fun getWarrantyItem(warrantyItemId: String) = viewModelScope.launch {
         firestoreRepository.getWarrantyItem(warrantyItemId).collect {
             _warrantyItem.value = it

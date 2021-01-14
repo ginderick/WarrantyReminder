@@ -76,6 +76,7 @@ class HomeFragment : Fragment() {
                 val position = viewHolder.adapterPosition
                 val warrantyItem = homeAdapter.differ.currentList[position]
                 val warrantyItemId = warrantyItem.id
+
                 homeViewModel.deleteItem(warrantyItemId)
 
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {

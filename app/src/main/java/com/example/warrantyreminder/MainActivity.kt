@@ -1,6 +1,6 @@
 package com.example.warrantyreminder
 
-import android.content.res.Configuration
+
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity

@@ -34,7 +34,8 @@
     <fragment
         android:id="@+id/warrantyFragment"
         android:name="com.example.warrantyreminder.ui.warranty.WarrantyFragment"
-        android:label="WarrantyFragment" >
+        android:label="WarrantyFragment"
+        tools:layout="@layout/fragment_warranty">
         <action
             android:id="@+id/action_warrantyFragment_to_editFragment"
             app:destination="@id/editFragment"
@@ -58,15 +59,14 @@
     </fragment>
     <fragment
         android:id="@+id/editFragment"
-        android:name="com.example.warrantyreminder.ui.warranty.EditWarrantyFragment"
-        android:label="EditFragment" >
+        android:name="com.example.warrantyreminder.ui.warranty.EditWarrantyFragment">
         <action
             android:id="@+id/action_editFragment_to_warrantyFragment"
             app:destination="@id/warrantyFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
+            app:popExitAnim="@anim/slide_out_right" />
         <argument
             android:name="warrantyItemId"
             app:argType="string" />

@@ -21,13 +21,11 @@ class FirestoreRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser!!.uid
-    private lateinit var currentPhotoId: String
     private val warrantyCollection = firestore.collection("users").document(user).collection("warranty")
 
 
     fun addWarrantyItem(warrantyItem: WarrantyItem, warrantyItemId: String) {
-        warrantyCollection.document(warrantyItemId)
-            .set(warrantyItem)
+        warrantyCollection.document(warrantyItemId).set(warrantyItem)
     }
 
     fun createWarrantyItem(): DocumentReference {
@@ -40,28 +38,43 @@ class FirestoreRepository {
     }
 
     fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {
-        val photoCollection = warrantyCollection.document(warrantyItemId).collection("photos")
 
+        val photoCollection = warrantyCollection.document(warrantyItemId).collection("photos")
         photoCollection.get().addOnSuccessListener {
             if (it.isEmpty) {
                 val document = photoCollection.document()
-                currentPhotoId = document.id
+                val currentPhotoId = document.id
                 photoCollection.document(currentPhotoId).set(warrantyPhoto)
             }
 
             //update remoteUri of the photo
-            photoCollection.document(currentPhotoId).update(
-                mapOf(
-                    "remoteUri" to warrantyPhoto.remoteUri,
-                    "dateTaken" to Timestamp.now()
+            photoCollection.get().addOnCompleteListener {
+                val id = it.result!!.documents[0].id
+                photoCollection.document(id).update(
+                    mapOf(
+                        "remoteUri" to warrantyPhoto.remoteUri,
+                        "dateTaken" to Timestamp.now()
+                    )
                 )
-            )
 
-            warrantyCollection.document(warrantyItemId).update(
-                mapOf(
-                    "imageUrl" to warrantyPhoto.remoteUri
+                warrantyCollection.document(warrantyItemId).update(
+                    mapOf(
+                        "imageUrl" to warrantyPhoto.remoteUri
+                    )
                 )
-            )
+            }
+//            photoCollection.document(currentPhotoId).update(
+//                mapOf(
+//                    "remoteUri" to warrantyPhoto.remoteUri,
+//                    "dateTaken" to Timestamp.now()
+//                )
+//            )
+//
+//            warrantyCollection.document(warrantyItemId).update(
+//                mapOf(
+//                    "imageUrl" to warrantyPhoto.remoteUri
+//                )
+//            )
         }
     }
 
@@ -71,7 +84,6 @@ class FirestoreRepository {
             val id = it.result!!.documents[0].id
             warrantyCollection.document(warrantyItem).collection("photos").document(id).delete()
         }
-
         return warrantyCollection.document(warrantyItem).delete()
     }
 

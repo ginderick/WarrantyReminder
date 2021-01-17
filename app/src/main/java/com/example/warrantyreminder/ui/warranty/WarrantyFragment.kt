@@ -9,10 +9,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentWarrantyBinding
 import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.android.synthetic.main.fragment_warranty.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +61,9 @@ class WarrantyFragment : Fragment() {
                     tvItemName.text = it.itemName
                     tvItemDescription.text = it.itemDescription
                     tvExpiryDate.text = it.expirationDate
+                    Glide.with(requireContext())
+                        .load(it.imageUrl)
+                        .into(ivWarranty)
                 })
             }
         }

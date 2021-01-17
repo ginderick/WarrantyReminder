@@ -114,8 +114,6 @@ class HomeFragment : Fragment() {
     }
 
 
-
-    //TODO 2. Add image in model class
     //TODO 3. Fix Back button due to it navigates back to register activity
     //TODO 4. Expiration Date convert to Date Dialog
     //TODO 5. Add signup button

@@ -4,13 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -20,12 +19,9 @@ import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
 import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.coroutines.*
@@ -79,9 +75,14 @@ class EditWarrantyFragment : Fragment() {
 
         when (operationType) {
             "CREATING" -> {
+                //Set the fragment's toolbar title
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = "Creating"
+
 
             }
             "EDITING" -> {
+                //Set the fragment's toolbar title
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = "Editing"
 
                 homeViewModel.apply {
                     getWarrantyItem(itemId)
@@ -89,28 +90,30 @@ class EditWarrantyFragment : Fragment() {
                         textItemName.editText?.setText(it.itemName)
                         etItemDescription.editText?.setText(it.itemDescription)
                         etExpiryDate.setText(it.expirationDate)
+                        if (it.imageUrl.isEmpty()) {
+                            EditWarrantyImage.setImageResource(R.drawable.ic_image_holder)
+                        } else {
+                            Glide.with(requireContext())
+                                .load(it.imageUrl)
+                                .into(EditWarrantyImage)
+                        }
                     })
 
                 }
-
-                warrantyImage.setOnClickListener {
-                    Intent(Intent.ACTION_GET_CONTENT).also {
-                        it.type = "image/*"
-                        startActivityForResult(it, REQUEST_CODE_IMAGE_PICK)
-                    }
-                }
-
-                btnUploadImage.setOnClickListener {
-                    uploadImageToStorage(itemId)
-                }
-
-                btnDownloadImage.setOnClickListener {
-                    downloadImage()
-                }
-
-
             }
         }
+
+        EditWarrantyImage.setOnClickListener {
+            Intent(Intent.ACTION_GET_CONTENT).also {
+                it.type = "image/*"
+                startActivityForResult(it, REQUEST_CODE_IMAGE_PICK)
+            }
+        }
+
+        btnUploadImage.setOnClickListener {
+            uploadImageToStorage(itemId)
+        }
+
     }
 
     private fun uploadImageToStorage(warrantyItemId: String) = CoroutineScope(Dispatchers.IO).launch {
@@ -137,24 +140,12 @@ class EditWarrantyFragment : Fragment() {
         }
     }
 
-    private fun downloadImage() {
-        val uri = photo.remoteUri
-        Glide.with(requireContext())
-            .load(uri)
-            .into(warrantyDownloadImage)
-    }
-
-
-
-
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_IMAGE_PICK) {
             data?.data?.let {
                 curFile = it
-                warrantyImage.setImageURI(it)
+                EditWarrantyImage.setImageURI(it)
             }
         }
     }
@@ -223,6 +214,8 @@ class EditWarrantyFragment : Fragment() {
 
                 homeViewModel.apply {
                     saveWarrantyItem(warrantyItem)
+                    uploadImageToStorage(this.warrantyItemId.value!!)
+
                 }
                 itemId = homeViewModel.warrantyItemId.value!!
                 sendWarrantyItemBundle()
@@ -235,8 +228,7 @@ class EditWarrantyFragment : Fragment() {
         return WarrantyItem(
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
-            expirationDate = etExpiryDate.text.toString(),
-            imageUrl = ""
+            expirationDate = etExpiryDate.text.toString()
         )
     }
 
@@ -260,9 +252,9 @@ class EditWarrantyFragment : Fragment() {
                             "itemName" to textItemName.editText?.text.toString(),
                             "itemDescription" to etItemDescription.editText?.text.toString(),
                             "expirationDate" to etExpiryDate.text.toString(),
-                            "imageUrl" to ""
                         )
                     )
+                uploadImageToStorage(itemId)
                 sendWarrantyItemBundle()
             }
         }

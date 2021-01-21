@@ -117,4 +117,5 @@ class HomeFragment : Fragment() {
     //TODO 3. Fix Back button due to it navigates back to register activity
     //TODO 4. Expiration Date convert to Date Dialog
     //TODO 5. Add signup button
+    //TODO 6. Add Notifications
 }

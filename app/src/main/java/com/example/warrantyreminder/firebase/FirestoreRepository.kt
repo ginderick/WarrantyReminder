@@ -4,6 +4,7 @@ import android.util.Log
 
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
+import com.example.warrantyreminder.utils.Utils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -63,18 +65,6 @@ class FirestoreRepository {
                     )
                 )
             }
-//            photoCollection.document(currentPhotoId).update(
-//                mapOf(
-//                    "remoteUri" to warrantyPhoto.remoteUri,
-//                    "dateTaken" to Timestamp.now()
-//                )
-//            )
-//
-//            warrantyCollection.document(warrantyItemId).update(
-//                mapOf(
-//                    "imageUrl" to warrantyPhoto.remoteUri
-//                )
-//            )
         }
     }
 
@@ -87,9 +77,6 @@ class FirestoreRepository {
         return warrantyCollection.document(warrantyItem).delete()
     }
 
-
-
-
     fun getWarrantyItem(warrantyItemId: String): Flow<WarrantyItem> {
         return callbackFlow {
             val listener =
@@ -101,6 +88,17 @@ class FirestoreRepository {
                 listener.remove()
             }
         }
+    }
+
+    fun updateWarrantyItem(warrantyItemId: String, itemName: String, itemDescription: String, expirationDate: Long) {
+        warrantyCollection.document(warrantyItemId)
+            .update(
+            mapOf(
+                "itemName" to itemName,
+                "itemDescription" to itemDescription,
+                "expirationDate" to expirationDate
+            )
+        )
     }
 
     fun queryWarrantyList(): Flow<List<WarrantyItem>> {

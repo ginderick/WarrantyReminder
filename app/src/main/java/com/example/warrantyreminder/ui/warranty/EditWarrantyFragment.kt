@@ -18,6 +18,8 @@ import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
 import com.example.warrantyreminder.ui.home.HomeViewModel
+import com.example.warrantyreminder.utils.Utils
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -25,10 +27,13 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.coroutines.*
-
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.time.ExperimentalTime
 
 private const val REQUEST_CODE_IMAGE_PICK = 0
 
+@ExperimentalTime
 @ExperimentalCoroutinesApi
 class EditWarrantyFragment : Fragment() {
 
@@ -38,8 +43,6 @@ class EditWarrantyFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
     private val args: EditWarrantyFragmentArgs by navArgs()
-    private val warrantyCollectionRef = Firebase.firestore.collection("users")
-    private val user = FirebaseAuth.getInstance().currentUser?.uid
     private lateinit var homeViewModel: HomeViewModel
     lateinit var itemId: String
     lateinit var operationType: String
@@ -77,9 +80,8 @@ class EditWarrantyFragment : Fragment() {
             "CREATING" -> {
                 //Set the fragment's toolbar title
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = "Creating"
-
-
             }
+
             "EDITING" -> {
                 //Set the fragment's toolbar title
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = "Editing"
@@ -89,7 +91,9 @@ class EditWarrantyFragment : Fragment() {
                     warrantyItem.observe(viewLifecycleOwner, Observer {
                         textItemName.editText?.setText(it.itemName)
                         etItemDescription.editText?.setText(it.itemDescription)
-                        etExpiryDate.setText(it.expirationDate)
+                        btn_date.text = Utils.convertMillisToString(it.expirationDate)
+
+                        //Set an image holder when imageUrl is empty
                         if (it.imageUrl.isEmpty()) {
                             EditWarrantyImage.setImageResource(R.drawable.ic_image_holder)
                         } else {
@@ -103,6 +107,10 @@ class EditWarrantyFragment : Fragment() {
             }
         }
 
+        btn_date.setOnClickListener {
+            showDatePicker()
+        }
+
         EditWarrantyImage.setOnClickListener {
             Intent(Intent.ACTION_GET_CONTENT).also {
                 it.type = "image/*"
@@ -110,35 +118,33 @@ class EditWarrantyFragment : Fragment() {
             }
         }
 
-        btnUploadImage.setOnClickListener {
-            uploadImageToStorage(itemId)
-        }
-
     }
 
-    private fun uploadImageToStorage(warrantyItemId: String) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            curFile?.let {
-                val imageRef = imageRef.child("images/$warrantyItemId/${it.lastPathSegment}")
-                val uploadTask = imageRef.putFile(it)
-                uploadTask.addOnSuccessListener {
-                    val downloadUrl = imageRef.downloadUrl
-                    downloadUrl.addOnSuccessListener { uri ->
-                        photo = WarrantyPhoto(remoteUri = uri.toString())
-                        homeViewModel.updatePhotoDb(itemId, photo)
+    private fun uploadImageToStorage(warrantyItemId: String) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                curFile?.let {
+                    val imageRef = imageRef.child("images/$warrantyItemId/${it.lastPathSegment}")
+                    val uploadTask = imageRef.putFile(it)
+                    uploadTask.addOnSuccessListener {
+                        val downloadUrl = imageRef.downloadUrl
+                        downloadUrl.addOnSuccessListener { uri ->
+                            photo = WarrantyPhoto(remoteUri = uri.toString())
+                            homeViewModel.updatePhotoDb(itemId, photo)
+                        }
+                    }
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Successfully uploaded image", Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
+
+            } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Successfully uploaded image", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }
-
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-            }
         }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -225,10 +231,12 @@ class EditWarrantyFragment : Fragment() {
 
 
     private fun createWarrantyItem(): WarrantyItem {
+
         return WarrantyItem(
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
-            expirationDate = etExpiryDate.text.toString()
+            expirationDate = Utils.convertStringToMillis(btn_date.text.toString())
+
         )
     }
 
@@ -246,14 +254,16 @@ class EditWarrantyFragment : Fragment() {
             else -> {
                 textItemName.error = null
                 etItemDescription.error = null
-                warrantyCollectionRef.document(user!!).collection("warranty").document(itemId)
-                    .update(
-                        mapOf(
-                            "itemName" to textItemName.editText?.text.toString(),
-                            "itemDescription" to etItemDescription.editText?.text.toString(),
-                            "expirationDate" to etExpiryDate.text.toString(),
-                        )
-                    )
+                val textItemName = textItemName.editText?.text.toString()
+                val etItemDescription = etItemDescription.editText?.text.toString()
+                val expirationDate = Utils.convertStringToMillis(btn_date.text.toString())
+
+                homeViewModel.updateWarrantyItem(
+                    itemId,
+                    textItemName,
+                    etItemDescription,
+                    expirationDate
+                )
                 uploadImageToStorage(itemId)
                 sendWarrantyItemBundle()
             }
@@ -273,6 +283,31 @@ class EditWarrantyFragment : Fragment() {
             }
             .create()
         dialog.show()
+    }
+
+
+    private fun showDatePicker() {
+
+        val builder = MaterialDatePicker.Builder.datePicker()
+        val today = MaterialDatePicker.todayInUtcMilliseconds()
+        val inputMode = MaterialDatePicker.INPUT_MODE_TEXT
+
+        val picker = builder.build()
+
+        builder.setSelection(today)
+        builder.setInputMode(inputMode)
+
+        picker.addOnPositiveButtonClickListener {
+
+            val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+            utc.setTimeInMillis(it)
+            val format = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+            val dateString = format.format(utc.time)
+
+            btn_date.text = dateString
+        }
+
+        picker.show(childFragmentManager, "date picker")
     }
 
 

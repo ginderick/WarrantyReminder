@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentWarrantyBinding
 import com.example.warrantyreminder.ui.home.HomeViewModel
+import com.example.warrantyreminder.utils.Utils
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.android.synthetic.main.fragment_warranty.*
@@ -20,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @ExperimentalCoroutinesApi
@@ -30,6 +33,7 @@ class WarrantyFragment : Fragment() {
     private var _binding: FragmentWarrantyBinding? = null
     private val args: WarrantyFragmentArgs by navArgs()
     private lateinit var itemId: String
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -55,12 +59,16 @@ class WarrantyFragment : Fragment() {
         itemId = warrantyItemId
 
         viewLifecycleOwner.lifecycleScope.launch {
+
+
             homeViewModel.apply {
                 getWarrantyItem(itemId)
                 warrantyItem.observe(viewLifecycleOwner, Observer {
                     tvItemName.text = it.itemName
                     tvItemDescription.text = it.itemDescription
-                    tvExpiryDate.text = it.expirationDate
+                    tvExpiryDate.text = Utils.convertMillisToString(it.expirationDate)
+
+
                     Glide.with(requireContext())
                         .load(it.imageUrl)
                         .into(ivWarranty)

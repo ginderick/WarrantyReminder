@@ -62,6 +62,11 @@ class HomeViewModel : ViewModel() {
         firestoreRepository.addPhoto(warrantyItemId)
     }
 
+    fun updateWarrantyItem(warrantyItemId: String, itemName: String, itemDescription: String, expirationDate: Long) {
+        firestoreRepository.updateWarrantyItem(warrantyItemId, itemName, itemDescription, expirationDate)
+    }
+
+
     fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {
         firestoreRepository.updatePhotoDb(warrantyItemId, warrantyPhoto)
     }

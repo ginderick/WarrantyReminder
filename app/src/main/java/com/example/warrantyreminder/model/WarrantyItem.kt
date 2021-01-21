@@ -12,7 +12,7 @@ data class WarrantyItem(
     val id: String = "",
     val itemName: String = "",
     val itemDescription: String = "",
-    val expirationDate: String = "",
+    val expirationDate: Long = 0,
     @Exclude
     val imageUrl: String = "",
     @ServerTimestamp

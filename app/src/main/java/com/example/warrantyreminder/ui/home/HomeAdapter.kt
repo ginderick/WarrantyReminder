@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
+import com.example.warrantyreminder.utils.Utils
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -58,8 +59,8 @@ class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
         holder.itemView.apply {
 
             tvItemName.text = warrantyItem.itemName
-            tvExpiryDate.text = warrantyItem.expirationDate
             tvItemDescription.text = warrantyItem.itemDescription
+            tvExpiryDate.text = Utils.convertMillisToString(warrantyItem.expirationDate)
 
             Glide.with(context)
                 .load(warrantyItem.imageUrl)

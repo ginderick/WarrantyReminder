@@ -22,10 +22,11 @@ import com.example.warrantyreminder.utils.Utils
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
+import kotlinx.android.synthetic.main.fragment_warranty.*
+import kotlinx.android.synthetic.main.fragment_warranty_item.*
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,11 +79,15 @@ class EditWarrantyFragment : Fragment() {
 
         when (operationType) {
             "CREATING" -> {
+
                 //Set the fragment's toolbar title
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = "Creating"
+                btn_date.text = Utils.convertMillisToString(System.currentTimeMillis())
+                EditWarrantyImage.setImageResource(R.drawable.ic_image_holder)
             }
 
             "EDITING" -> {
+
                 //Set the fragment's toolbar title
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = "Editing"
 
@@ -102,7 +107,6 @@ class EditWarrantyFragment : Fragment() {
                                 .into(EditWarrantyImage)
                         }
                     })
-
                 }
             }
         }
@@ -124,7 +128,8 @@ class EditWarrantyFragment : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 curFile?.let {
-                    val imageRef = imageRef.child("images/$warrantyItemId/${it.lastPathSegment}")
+                    val user = FirebaseAuth.getInstance().currentUser!!.uid
+                    val imageRef = imageRef.child("images/$user/$warrantyItemId/image.jpg")
                     val uploadTask = imageRef.putFile(it)
                     uploadTask.addOnSuccessListener {
                         val downloadUrl = imageRef.downloadUrl

@@ -12,6 +12,8 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
@@ -23,7 +25,9 @@ class FirestoreRepository {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser!!.uid
-    private val warrantyCollection = firestore.collection("users").document(user).collection("warranty")
+    private val imageRef = Firebase.storage.reference
+    private val warrantyCollection = firestore.collection("users")
+        .document(user).collection("warranty")
 
 
     fun addWarrantyItem(warrantyItem: WarrantyItem, warrantyItemId: String) {
@@ -70,9 +74,13 @@ class FirestoreRepository {
 
     fun deleteItem(warrantyItem: String): Task<Void> {
         warrantyCollection.document(warrantyItem).collection("photos").get().addOnCompleteListener {
-            //get the id of the document on the sub-collection photo
-            val id = it.result!!.documents[0].id
-            warrantyCollection.document(warrantyItem).collection("photos").document(id).delete()
+
+            if (it.result!!.size() > 0) {
+                //get the id of the document on the sub-collection photo
+                val id = it.result!!.documents[0].id
+                warrantyCollection.document(warrantyItem).collection("photos").document(id).delete()
+                imageRef.child("images/$user/$warrantyItem/image.jpg").delete()
+            }
         }
         return warrantyCollection.document(warrantyItem).delete()
     }
@@ -90,15 +98,20 @@ class FirestoreRepository {
         }
     }
 
-    fun updateWarrantyItem(warrantyItemId: String, itemName: String, itemDescription: String, expirationDate: Long) {
+    fun updateWarrantyItem(
+        warrantyItemId: String,
+        itemName: String,
+        itemDescription: String,
+        expirationDate: Long
+    ) {
         warrantyCollection.document(warrantyItemId)
             .update(
-            mapOf(
-                "itemName" to itemName,
-                "itemDescription" to itemDescription,
-                "expirationDate" to expirationDate
+                mapOf(
+                    "itemName" to itemName,
+                    "itemDescription" to itemDescription,
+                    "expirationDate" to expirationDate
+                )
             )
-        )
     }
 
     fun queryWarrantyList(): Flow<List<WarrantyItem>> {
@@ -113,12 +126,33 @@ class FirestoreRepository {
                     return@addSnapshotListener
                 }
 
-                val map =
-                    value?.documents!!.mapNotNull { it.toObject(WarrantyItem::class.java) }
-                Log.d("warrantyItem", map.toString())
+                val map = value?.documents!!.mapNotNull { it.toObject(WarrantyItem::class.java) }
                 offer(map)
             }
+            awaitClose {
+                listener.remove()
+            }
+        }
+    }
 
+    fun queryWarrantyItem(textString: String): Flow<List<WarrantyItem>> {
+        return callbackFlow {
+            val listener = warrantyCollection.whereEqualTo("itemName", textString)
+                .orderBy(
+                "itemName",
+                Query.Direction.DESCENDING
+            ).addSnapshotListener { value, error ->
+                Log.d("FirestoreRepository", value?.documents.toString())
+
+                if (error != null) {
+                    cancel(message = "Error fetching items", cause = error)
+                    return@addSnapshotListener
+                }
+
+                val map = value?.documents!!.mapNotNull { it.toObject(WarrantyItem::class.java) }
+                Log.d("FirestoreRepository", map.toString())
+                offer(map)
+            }
             awaitClose {
                 listener.remove()
             }

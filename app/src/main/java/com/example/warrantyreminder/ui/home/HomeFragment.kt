@@ -46,7 +46,6 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
 
         homeViewModel.queryList()
-
         homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
             homeAdapter.differ.submitList(it)
         })
@@ -106,7 +105,6 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView() {
         homeAdapter = HomeAdapter()
 
-
         rvHome.apply {
             adapter = homeAdapter
             layoutManager = LinearLayoutManager(activity)
@@ -115,7 +113,6 @@ class HomeFragment : Fragment() {
 
 
     //TODO 3. Fix Back button due to it navigates back to register activity
-    //TODO 4. Expiration Date convert to Date Dialog
     //TODO 5. Add signup button
     //TODO 6. Add Notifications
 }

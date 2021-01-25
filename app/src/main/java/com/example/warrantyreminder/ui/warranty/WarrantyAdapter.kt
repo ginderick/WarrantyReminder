@@ -1,4 +1,4 @@
-package com.example.warrantyreminder.ui.home
+package com.example.warrantyreminder.ui.warranty
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +11,10 @@ import com.example.warrantyreminder.R
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.utils.Utils
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import kotlinx.android.synthetic.main.fragment_warranty_item.view.*
 
 
-class HomeAdapter : RecyclerView.Adapter<HomeAdapter.WarrantyItemViewHolder>() {
+class WarrantyAdapter : RecyclerView.Adapter<WarrantyAdapter.WarrantyItemViewHolder>() {
 
     inner class WarrantyItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

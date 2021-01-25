@@ -1,11 +1,9 @@
 package com.example.warrantyreminder.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,13 +12,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.warrantyreminder.R
-import com.example.warrantyreminder.model.WarrantyItem
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.example.warrantyreminder.ui.warranty.WarrantyAdapter
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.toObject
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -29,7 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
-    lateinit var homeAdapter: HomeAdapter
+    lateinit var warrantyAdapter: WarrantyAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +40,7 @@ class HomeFragment : Fragment() {
 
         homeViewModel.queryList()
         homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
-            homeAdapter.differ.submitList(it)
+            warrantyAdapter.differ.submitList(it)
         })
 
         fab_add.setOnClickListener {
@@ -73,7 +66,7 @@ class HomeFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val warrantyItem = homeAdapter.differ.currentList[position]
+                val warrantyItem = warrantyAdapter.differ.currentList[position]
                 val warrantyItemId = warrantyItem.id
 
                 homeViewModel.deleteItem(warrantyItemId)
@@ -88,7 +81,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        homeAdapter.setOnItemClickListener {
+        warrantyAdapter.setOnItemClickListener {
 
             //send data to WarrantyFragment
             val bundle = Bundle().apply {
@@ -103,10 +96,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        homeAdapter = HomeAdapter()
+        warrantyAdapter = WarrantyAdapter()
 
         rvHome.apply {
-            adapter = homeAdapter
+            adapter = warrantyAdapter
             layoutManager = LinearLayoutManager(activity)
         }
     }

@@ -6,19 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.search.SearchFragment">
 
-    <!--    <EditText-->
-    <!--        android:id="@+id/search_field"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:background="@color/colorLightBg"-->
-    <!--        android:ems="10"-->
-    <!--        android:hint="Search here..."-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        android:padding="16dp"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_field"
         android:layout_width="match_parent"

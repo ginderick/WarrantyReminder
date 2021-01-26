@@ -51,35 +51,7 @@ class HomeFragment : Fragment() {
             findNavController().navigate(R.id.editFragment, bundle)
         }
 
-        //swipe to delete
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-                val warrantyItem = warrantyAdapter.differ.currentList[position]
-                val warrantyItemId = warrantyItem.id
-
-                homeViewModel.deleteItem(warrantyItemId)
-
-                Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
-                    show()
-                }
-            }
-        }
-        ItemTouchHelper(itemTouchHelperCallback).apply {
-            attachToRecyclerView(rvHome)
-        }
-
+        swipeToDelete()
 
         warrantyAdapter.setOnItemClickListener {
 
@@ -104,8 +76,37 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun swipeToDelete() {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
 
-    //TODO 3. Fix Back button due to it navigates back to register activity
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val warrantyItem = warrantyAdapter.differ.currentList[position]
+                val warrantyItemId = warrantyItem.id
+
+                homeViewModel.deleteItem(warrantyItemId)
+
+                Snackbar.make(view!!, "Successfully deleted article", Snackbar.LENGTH_LONG).apply {
+                    show()
+                }
+            }
+        }
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(rvHome)
+        }
+    }
+
+
     //TODO 5. Add signup button
     //TODO 6. Add Notifications
 }

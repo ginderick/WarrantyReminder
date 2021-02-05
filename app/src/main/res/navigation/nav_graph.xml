@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@id/navigation_home">
 
     <fragment
         android:id="@+id/navigation_home"
@@ -21,20 +21,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_search"
-        android:name="com.example.warrantyreminder.ui.search.SearchFragment"
-        android:label="@string/title_search"
-        tools:layout="@layout/fragment_search" >
-        <action
-            android:id="@+id/action_navigation_search_to_warrantyFragment"
-            app:destination="@id/warrantyFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-    </fragment>
-
-    <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.warrantyreminder.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
@@ -44,13 +30,6 @@
         android:name="com.example.warrantyreminder.ui.warranty.WarrantyFragment"
         android:label="WarrantyFragment"
         tools:layout="@layout/fragment_warranty">
-        <action
-            android:id="@+id/action_warrantyFragment_to_editFragment"
-            app:destination="@id/editFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_warrantyFragment_to_navigation_home"
             app:destination="@id/navigation_home"
@@ -64,20 +43,30 @@
         <argument
             android:name="warrantyItemId"
             app:argType="string"/>
+        <action
+            android:id="@+id/action_warrantyFragment_to_addEditWarrantyFragment"
+            app:destination="@id/addEditWarrantyFragment" />
     </fragment>
     <fragment
-        android:id="@+id/editFragment"
-        android:name="com.example.warrantyreminder.ui.warranty.EditWarrantyFragment">
+        android:id="@+id/navigation_search"
+        android:name="com.example.warrantyreminder.ui.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search">
         <action
-            android:id="@+id/action_editFragment_to_warrantyFragment"
-            app:destination="@id/warrantyFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            android:id="@+id/action_searchFragment_to_warrantyFragment"
+            app:destination="@id/warrantyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditWarrantyFragment"
+        android:name="com.example.warrantyreminder.ui.warranty.AddEditWarrantyFragment"
+        android:label="AddEditWarrantyFragment" >
+
         <argument
             android:name="warrantyItemId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_addEditWarrantyFragment_to_warrantyFragment"
+            app:destination="@id/warrantyFragment" />
         <argument
             android:name="operationType"
             app:argType="string" />

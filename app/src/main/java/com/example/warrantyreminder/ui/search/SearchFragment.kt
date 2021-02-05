@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.warrantyreminder.R
+import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.example.warrantyreminder.ui.warranty.WarrantyAdapter
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class SearchFragment : Fragment() {
 
 
-    private lateinit var searchViewModel: SearchViewModel
+    private lateinit var homeViewModel: HomeViewModel
     lateinit var warrantyAdapter: WarrantyAdapter
 
     override fun onCreateView(
@@ -25,35 +26,35 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        searchViewModel =
-            ViewModelProvider(this).get(SearchViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_search, container, false)
-        return root
+        return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         setupRecyclerView()
-        searchViewModel.queryList()
-        searchViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
-            warrantyAdapter.differ.submitList(it)
-        })
+        homeViewModel.apply {
+            queryList()
+            warrantyItemList.observe(viewLifecycleOwner, Observer {
+                warrantyAdapter.differ.submitList(it)
+            })
+        }
 
-        setTextListener()
 
         warrantyAdapter.setOnItemClickListener {
-
-            //send data to WarrantyFragment
-            val bundle = Bundle().apply {
-                putString("warrantyItemId", it.id)
-                putString("operationTypeString", "EDITING")
-            }
             findNavController().navigate(
-                R.id.action_navigation_search_to_warrantyFragment,
-                bundle
+                R.id.action_searchFragment_to_warrantyFragment, createWarrantyItemBundle(it.id)
             )
         }
+
+        setTextListener()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.options_menu, menu)
     }
 
     private fun setupRecyclerView() {
@@ -64,23 +65,26 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.options_menu, menu)
+    private fun createWarrantyItemBundle(
+        warrantyItemId: String
+    ): Bundle {
+        return Bundle().apply {
+            putString("warrantyItemId", warrantyItemId)
+        }
     }
 
     private fun setTextListener() {
         search_field.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchViewModel.queryWarrantyItem(query)
+                homeViewModel.queryWarrantyItem(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (search_field.query.isEmpty()) {
-                    searchViewModel.queryList()
+                    homeViewModel.queryList()
                 } else {
-                    searchViewModel.queryWarrantyItem(newText)
+                    homeViewModel.queryWarrantyItem(newText)
                 }
                 return false
             }

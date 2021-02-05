@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
-import com.example.warrantyreminder.databinding.FragmentEditWarrantyBinding
+import com.example.warrantyreminder.databinding.FragmentAddEditWarrantyBinding
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
 import com.example.warrantyreminder.ui.home.HomeViewModel
@@ -24,9 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.main.fragment_edit_warranty.*
-import kotlinx.android.synthetic.main.fragment_warranty.*
-import kotlinx.android.synthetic.main.fragment_warranty_item.*
+import kotlinx.android.synthetic.main.fragment_add_edit_warranty.*
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,20 +34,20 @@ private const val REQUEST_CODE_IMAGE_PICK = 0
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
-class EditWarrantyFragment : Fragment() {
+class AddEditWarrantyFragment : Fragment() {
 
-    private var _binding: FragmentEditWarrantyBinding? = null
+    private var _binding: FragmentAddEditWarrantyBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val args: EditWarrantyFragmentArgs by navArgs()
-    private lateinit var homeViewModel: HomeViewModel
+    private val args: AddEditWarrantyFragmentArgs by navArgs()
     lateinit var itemId: String
     lateinit var operationType: String
     private var curFile: Uri? = null
     private val imageRef = Firebase.storage.reference
     private lateinit var photo: WarrantyPhoto
+    private lateinit var homeViewModel: HomeViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,16 +64,16 @@ class EditWarrantyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         setHasOptionsMenu(true)
 
-        _binding = FragmentEditWarrantyBinding.inflate(inflater, container, false)
+        _binding = FragmentAddEditWarrantyBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         when (operationType) {
             "CREATING" -> {
@@ -135,7 +133,9 @@ class EditWarrantyFragment : Fragment() {
                         val downloadUrl = imageRef.downloadUrl
                         downloadUrl.addOnSuccessListener { uri ->
                             photo = WarrantyPhoto(remoteUri = uri.toString())
-                            homeViewModel.updatePhotoDb(itemId, photo)
+                            homeViewModel.apply {
+                                updatePhotoDb(itemId, photo)
+                            }
                         }
                     }
                     withContext(Dispatchers.Main) {
@@ -175,7 +175,7 @@ class EditWarrantyFragment : Fragment() {
 
     private fun navigateToWarrantyFragment(bundle: Bundle) {
         findNavController().navigate(
-            R.id.action_editFragment_to_warrantyFragment,
+            R.id.action_addEditWarrantyFragment_to_warrantyFragment,
             bundle
         )
     }
@@ -194,6 +194,8 @@ class EditWarrantyFragment : Fragment() {
             }
             else -> when (operationType) {
                 "CREATING" -> super.onOptionsItemSelected(item)
+
+
                 else -> {
                     showCancelWarrantyEditDialog()
                     return true
@@ -226,7 +228,6 @@ class EditWarrantyFragment : Fragment() {
                 homeViewModel.apply {
                     saveWarrantyItem(warrantyItem)
                     uploadImageToStorage(this.warrantyItemId.value!!)
-
                 }
                 itemId = homeViewModel.warrantyItemId.value!!
                 sendWarrantyItemBundle()
@@ -241,7 +242,6 @@ class EditWarrantyFragment : Fragment() {
             itemName = textItemName.editText?.text.toString(),
             itemDescription = etItemDescription.editText?.text.toString(),
             expirationDate = Utils.convertStringToMillis(btn_date.text.toString())
-
         )
     }
 
@@ -263,12 +263,14 @@ class EditWarrantyFragment : Fragment() {
                 val etItemDescription = etItemDescription.editText?.text.toString()
                 val expirationDate = Utils.convertStringToMillis(btn_date.text.toString())
 
+
                 homeViewModel.updateWarrantyItem(
                     itemId,
                     textItemName,
                     etItemDescription,
-                    expirationDate
-                )
+                    expirationDate)
+
+
                 uploadImageToStorage(itemId)
                 sendWarrantyItemBundle()
             }

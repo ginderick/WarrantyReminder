@@ -1,6 +1,5 @@
 package com.example.warrantyreminder.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,11 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.warrantyreminder.firebase.FirestoreRepository
 import com.example.warrantyreminder.model.WarrantyItem
 import com.example.warrantyreminder.model.WarrantyPhoto
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -46,10 +40,9 @@ class HomeViewModel : ViewModel() {
     }
 
 
-    fun deleteItem(item: String) {
-        firestoreRepository.deleteItem(item)
+    fun deleteItem(itemId: String) {
+        firestoreRepository.deleteItem(itemId)
     }
-
 
 
     fun getWarrantyItem(warrantyItemId: String) = viewModelScope.launch {
@@ -58,20 +51,18 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun addPhoto(warrantyItemId: String) {
-        firestoreRepository.addPhoto(warrantyItemId)
-    }
-
     fun updateWarrantyItem(warrantyItemId: String, itemName: String, itemDescription: String, expirationDate: Long) {
         firestoreRepository.updateWarrantyItem(warrantyItemId, itemName, itemDescription, expirationDate)
     }
-
 
     fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {
         firestoreRepository.updatePhotoDb(warrantyItemId, warrantyPhoto)
     }
 
-
-
-
+    fun queryWarrantyItem(searchText: String) = viewModelScope.launch {
+        _warrantyItemsList.value = null
+        firestoreRepository.queryWarrantyItem(searchText).collect {
+            _warrantyItemsList.value = it
+        }
+    }
 }

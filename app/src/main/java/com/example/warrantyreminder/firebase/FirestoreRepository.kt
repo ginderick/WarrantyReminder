@@ -14,7 +14,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.main.fragment_edit_warranty.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -72,17 +71,17 @@ class FirestoreRepository {
         }
     }
 
-    fun deleteItem(warrantyItem: String): Task<Void> {
-        warrantyCollection.document(warrantyItem).collection("photos").get().addOnCompleteListener {
+    fun deleteItem(warrantyItemId: String): Task<Void> {
+        warrantyCollection.document(warrantyItemId).collection("photos").get().addOnCompleteListener {
 
             if (it.result!!.size() > 0) {
                 //get the id of the document on the sub-collection photo
                 val id = it.result!!.documents[0].id
-                warrantyCollection.document(warrantyItem).collection("photos").document(id).delete()
-                imageRef.child("images/$user/$warrantyItem/image.jpg").delete()
+                warrantyCollection.document(warrantyItemId).collection("photos").document(id).delete()
+                imageRef.child("images/$user/$warrantyItemId/image.jpg").delete()
             }
         }
-        return warrantyCollection.document(warrantyItem).delete()
+        return warrantyCollection.document(warrantyItemId).delete()
     }
 
     fun getWarrantyItem(warrantyItemId: String): Flow<WarrantyItem> {
@@ -97,6 +96,8 @@ class FirestoreRepository {
             }
         }
     }
+
+
 
     fun updateWarrantyItem(
         warrantyItemId: String,

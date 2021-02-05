@@ -1,10 +1,12 @@
 package com.example.warrantyreminder.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -21,15 +23,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
     lateinit var warrantyAdapter: WarrantyAdapter
+    private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -37,42 +39,47 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-
-        homeViewModel.queryList()
-        homeViewModel.warrantyItemList.observe(viewLifecycleOwner, Observer {
-            warrantyAdapter.differ.submitList(it)
-        })
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel.apply {
+            queryList()
+            warrantyItemList.observe(viewLifecycleOwner, Observer {
+                warrantyAdapter.differ.submitList(it)
+            })
+        }
 
         fab_add.setOnClickListener {
-            val bundle = Bundle().apply {
-                putString("operationType", "CREATING")
-                putString("warrantyItemId", "")
-            }
-            findNavController().navigate(R.id.editFragment, bundle)
+            findNavController().navigate(
+                R.id.action_warrantyFragment_to_navigation_home,
+                createWarrantyItemBundle("CREATING")
+            )
         }
 
         swipeToDelete()
 
         warrantyAdapter.setOnItemClickListener {
-
-            //send data to WarrantyFragment
-            val bundle = Bundle().apply {
-                putString("warrantyItemId", it.id)
-                putString("operationTypeString", "EDITING")
-            }
+            val warrantyItemId = it.id
             findNavController().navigate(
                 R.id.action_navigation_home_to_warrantyFragment,
-                bundle
+                createWarrantyItemBundle("EDITING", warrantyItemId = warrantyItemId)
             )
+        }
+    }
+
+    private fun createWarrantyItemBundle(
+        operationType: String,
+        warrantyItemId: String = ""
+    ): Bundle {
+        return Bundle().apply {
+            putString("operationType", operationType)
+            putString("warrantyItemId", warrantyItemId)
         }
     }
 
     private fun setupRecyclerView() {
         warrantyAdapter = WarrantyAdapter()
-
         rvHome.apply {
             adapter = warrantyAdapter
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -107,6 +114,11 @@ class HomeFragment : Fragment() {
     }
 
 
+
+
+    //TODO 4. Set to ViewModel to retrieve warrantyItemId in all fragments
+    //This is to utilize the viewModel instead of using bundle/argumnets, also to utilize popUpBackStack()
     //TODO 5. Add signup button
-    //TODO 6. Add Notifications
+    //TODO 6. Add spinner (loading)
+    //TODO 7. Add Notifications
 }

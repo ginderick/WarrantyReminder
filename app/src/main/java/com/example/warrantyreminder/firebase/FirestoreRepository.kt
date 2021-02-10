@@ -14,16 +14,22 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class FirestoreRepository {
+class FirestoreRepository
+    @Inject
+    constructor(
+    firestore: FirebaseFirestore,
+    firebaseAuth: FirebaseAuth
+    ) {
 
-    private val firestore = FirebaseFirestore.getInstance()
-    private val user = FirebaseAuth.getInstance().currentUser!!.uid
+    private val user = firebaseAuth.currentUser!!.uid
     private val imageRef = Firebase.storage.reference
     private val warrantyCollection = firestore.collection("users")
         .document(user).collection("warranty")

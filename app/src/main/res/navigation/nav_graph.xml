@@ -18,6 +18,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             />
+        <action
+            android:id="@+id/action_navigation_home_to_addEditWarrantyFragment"
+            app:destination="@id/addEditWarrantyFragment" />
     </fragment>
 
     <fragment

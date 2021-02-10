@@ -1,6 +1,7 @@
 package com.example.warrantyreminder.ui.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -11,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.example.warrantyreminder.ui.warranty.WarrantyAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
 
 
@@ -33,6 +36,7 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        Log.d("WarrantyReminderApp", "SearchViewModelCreated")
         setupRecyclerView()
         homeViewModel.apply {
             queryList()

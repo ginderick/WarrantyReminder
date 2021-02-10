@@ -1,5 +1,7 @@
 package com.example.warrantyreminder.ui.search
 
+import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,17 +11,24 @@ import com.example.warrantyreminder.model.WarrantyItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class SearchViewModel : ViewModel() {
+class SearchViewModel
+    @ViewModelInject
+    constructor(
+        val firestoreRepository: FirestoreRepository
+    ): ViewModel() {
 
-    private var firestoreRepository = FirestoreRepository()
+
 
     private val _warrantyItemsList = MutableLiveData<List<WarrantyItem>>()
     val warrantyItemList: LiveData<List<WarrantyItem>> = _warrantyItemsList
 
     private val _warrantyItemId = MutableLiveData<String>()
     val warrantyItemId: LiveData<String> = _warrantyItemId
+
+
 
 
 
@@ -41,5 +50,10 @@ class SearchViewModel : ViewModel() {
         //clear warrantyItemId
         _warrantyItemId.value = null
         _warrantyItemId.value = warrantyItemId
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("WarrantyReminderApp", "SearchViewModelCleared")
     }
 }

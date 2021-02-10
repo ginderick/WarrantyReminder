@@ -1,5 +1,6 @@
 package com.example.warrantyreminder.ui.home
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,10 +11,15 @@ import com.example.warrantyreminder.model.WarrantyPhoto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
-class HomeViewModel : ViewModel() {
+class HomeViewModel
+@ViewModelInject
+constructor(
+    val firestoreRepository: FirestoreRepository
+) : ViewModel() {
 
     private val _warrantyItemsList = MutableLiveData<List<WarrantyItem>>()
     val warrantyItemList: LiveData<List<WarrantyItem>> = _warrantyItemsList
@@ -23,8 +29,6 @@ class HomeViewModel : ViewModel() {
 
     private val _warrantyItemId = MutableLiveData<String>()
     val warrantyItemId: LiveData<String> = _warrantyItemId
-
-    private var firestoreRepository = FirestoreRepository()
 
 
     fun queryList() = viewModelScope.launch {
@@ -51,8 +55,18 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun updateWarrantyItem(warrantyItemId: String, itemName: String, itemDescription: String, expirationDate: Long) {
-        firestoreRepository.updateWarrantyItem(warrantyItemId, itemName, itemDescription, expirationDate)
+    fun updateWarrantyItem(
+        warrantyItemId: String,
+        itemName: String,
+        itemDescription: String,
+        expirationDate: Long
+    ) {
+        firestoreRepository.updateWarrantyItem(
+            warrantyItemId,
+            itemName,
+            itemDescription,
+            expirationDate
+        )
     }
 
     fun updatePhotoDb(warrantyItemId: String, warrantyPhoto: WarrantyPhoto) {

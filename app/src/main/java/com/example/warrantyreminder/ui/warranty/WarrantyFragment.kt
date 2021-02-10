@@ -1,29 +1,39 @@
 package com.example.warrantyreminder.ui.warranty
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.activity.OnBackPressedCallback
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.databinding.FragmentWarrantyBinding
-import com.example.warrantyreminder.ui.home.HomeViewModel
 import com.example.warrantyreminder.utils.Utils
+import com.example.warrantyreminder.utils.sendNotification
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_warranty.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class WarrantyFragment : Fragment() {
 
 
@@ -36,10 +46,10 @@ class WarrantyFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val NOTIFICATION_ID = 0
+    private val REQUEST_CODE = 0
+    private val FLAGS = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +71,17 @@ class WarrantyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val notificationManager = ContextCompat.getSystemService(
+            requireContext(),
+            NotificationManager::class.java
+        ) as NotificationManager
+
+        createChannel(
+            getString(R.string.egg_notification_channel_id),
+            getString(R.string.egg_notification_channel_name)
+        )
+
+
         viewLifecycleOwner.lifecycleScope.launch() {
 
             warrantyViewModel.apply {
@@ -77,7 +98,39 @@ class WarrantyFragment : Fragment() {
             }
 
         }
+
+        btn_notification.setOnClickListener {
+            notificationManager.sendNotification("This is a notification", requireContext())
+        }
     }
+
+    private fun createChannel(channelId: String, channelName: String) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+
+                NotificationManager.IMPORTANCE_HIGH
+            )
+                .apply {
+                    setShowBadge(false)
+                }
+
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = getString(R.string.breakfast_notification_channel_description)
+
+            val notificationManager = requireActivity().getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
+
+        }
+
+    }
+
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -97,7 +150,6 @@ class WarrantyFragment : Fragment() {
 
 
     private fun editWarrantyItem() {
-
         val bundle = Bundle().apply {
             putString("operationType", "EDITING")
             putString("warrantyItemId", itemId)

@@ -24,6 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_add_edit_warranty.*
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
@@ -34,6 +35,7 @@ private const val REQUEST_CODE_IMAGE_PICK = 0
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class AddEditWarrantyFragment : Fragment() {
 
     private var _binding: FragmentAddEditWarrantyBinding? = null

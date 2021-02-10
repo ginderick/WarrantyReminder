@@ -9,7 +9,6 @@ import java.util.*
 object Utils {
 
     fun convertMillisToString(millis: Long): String {
-
         val utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
         utc.setTimeInMillis(millis)
         val format = SimpleDateFormat("MMM dd, yyyy", Locale.US)
@@ -18,10 +17,13 @@ object Utils {
     }
 
     fun convertStringToMillis(dateFormat: String): Long{
-
         val date = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).parse(dateFormat)
         return date!!.time
-
     }
+
+
+
+
+
 
 }

@@ -10,4 +10,9 @@
     <string name="register_button">Register</string>
     <string name="sign_up_button">Sign up</string>
     <string name="username_hint">user name</string>
+    <string name="egg_notification_channel_id" translatable="false">egg_channel</string>
+    <string name="notification_title">Warranty Reminder</string>
+    <string name="egg_notification_channel_name" translatable="true">Egg</string>
+    <string name="breakfast_notification_channel_description">Breakfast reminder</string>
+    <string name="eggs_ready">It is time! Bon appetit!</string>
 </resources>

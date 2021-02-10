@@ -16,10 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.warrantyreminder.R
 import com.example.warrantyreminder.ui.warranty.WarrantyAdapter
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-
+@AndroidEntryPoint
 @ExperimentalCoroutinesApi
 class HomeFragment : Fragment() {
 
@@ -49,7 +50,7 @@ class HomeFragment : Fragment() {
 
         fab_add.setOnClickListener {
             findNavController().navigate(
-                R.id.action_warrantyFragment_to_navigation_home,
+                R.id.action_navigation_home_to_addEditWarrantyFragment,
                 createWarrantyItemBundle("CREATING")
             )
         }
